@@ -2,7 +2,7 @@
 
 #show: classicthesis.with(
   title: "Medical Imaging",
-  subtitle: "Skriptum",
+  subtitle: "Lecture Skriptum",
   author: "Benjamin Bergmann",
   date: "2026",
 )
@@ -10,9 +10,22 @@
   set text(tracking: 0pt)
   it.body
 }
+#set page(
+  margin: (inside: 2.0cm, outside: 2.0cm), // Gleiche Werte für innen und außen
+)
 
 #set par(first-line-indent: 0pt)
 
+#let old-definition = definition
+
+#let definition(title: none, body) = block(
+  fill: red.lighten(91%), // Sehr helles Rot
+  stroke: red.lighten(80%) + 0.5pt, // Optional: feiner roter Rand
+  inset: 8pt,             // Abstand vom Text zum Rand der Box
+  radius: 2pt,            // Leicht abgerundete Ecken
+  width: 100%,
+  old-definition(title: title, body)
+)
 
 
 = Inverse Problems 
@@ -86,46 +99,46 @@ $ accent(u, hat) = F^(-1) (F(f)/(I sigma^2 F(k))) $
 == Vector Space 
 
 #definition(title: "Vector Space")[
-  A non-empty set $V$ is a vector space over a field $FF in {RR, CC}$ if there are operations  of vector addition: $V times V -> V$  and scalar multiplication: $FF times V -> V$ satisfying the following axioms.
+  A non-empty set $V$ is a vector space over a field $FF in {RR, CC}$ if there are operations of vector addition: $+:V times V -> V$  and scalar multiplication: $dot:FF times V -> V$ satisfying the following axioms:
+
   *Vector addition*
   1. $u+v in V quad forall u,v in V$
   2. $u + v = v + u$
   3. $(u + v) + w = u + (v + w) quad forall u,v,w in V$
-  4. $exists 0 in V: u + 0 = u$ 
-  5. $forall u in V: exists -u: u + (-u) = 0$
+  4. $exists 0 in V: u + 0 = u quad forall u in V$ 
+  5. $forall u in V: exists -w: u + (-w) = 0$
 
   *Scalar multiplication*
-  1. $a u in V$
-  2. $a (u + v) = a u + a v$
-  3. $(a + b) u = a u + b u$
-  4. $a (b u) = (a b) u$
-  5. $1 u = u$
+  1. $a v in V quad forall a in FF, forall v in V$
+  2. $(a b) v = a ( b v) quad forall a,b in FF, v in V$
+  3. $a (u + v)  = a u + a v quad forall a in FF, forall u,v in V$
+  4. $(a + b)v = a v +  b v quad forall a,b in FF, forall v in V$
+  5. $exists 1 in FF:1 *  u = u quad forall u in V$
 ]
 
 
-== Vector Space Examples
+*Vector Space Examples*
 
-- $RR^n = (x_1, dots, x_n)^T$
-- Continuous functions: $C(RR^n, RR)$
-- Once continuously differentiable functions: $C^1(RR^n, RR)$
-- Lebesgue space:
-  $L^2(RR^n) = { f | integral_(RR^n) abs(f(x))^2 d x < infinity }$
-- Sobolev space:
-  $H^1(RR^n) = { f in L^2 | integral_(RR^n) abs(nabla f(x))^2 d x < infinity }$
+- $bb(R)^n = {(x_1, ..., x_n)^T : x_1, ..., x_n in bb(R)}$
+- $cal(C)(bb(R)^n, bb(R))$ set of function $f: bb(R)^n -> bb(R)$ that are continuous
+- $cal(C)^1(bb(R)^n, bb(R))$ set of function $f: bb(R)^n -> bb(R)$ that are continuous and once continuously differentiable
+- $L^2(bb(R)^n, bb(R)) = {f: bb(R)^n -> bb(R) : integral_(bb(R)^n) |f(x)|^2 d x < oo}$ Lebesgue space
+- $H^1(bb(R)^n, bb(R)) = {f in L^2(bb(R)^n, bb(R)) : integral_(bb(R)^n) |f'(x)|^2 d x < oo}$ Sobolev space ($p=2$), Hilbert space
 
-
-== Definition: Inverse Problem
-
+== Inverse Problem
 #definition(title: "Inverse Problem")[
   Let $X, Y$ be vector spaces and $A: X -> Y$. 
-  The forward problem is $y = A x $.
-  The inverse problem is to find $x in X$ such that $ A x = y $.
+  The forward problem is defined as $y = A x$ for any $x in X$.
+  The inverse problem is to find $x in X$ such that $A x = y$ for any $y in Y$.
 ]
 
-== Definition: Well-Posedness (Hadamard)
+So we want to get $A^(-1)(y) = accent(x, hat)$
+
+== Well-Posedness (Hadamard)
+
+We can now start to categorize inverse problems:
 
 #definition(title: "Well-Posedness")[
-  We can now start to categorize inverse problems:
   The inverse problem $A x = y$ is well-posed if:
 
   1. *Existence:* a solution exists (EXISTENCE)
@@ -135,102 +148,235 @@ $ accent(u, hat) = F^(-1) (F(f)/(I sigma^2 F(k))) $
   If one condition fails, the problem is ill-posed.
 ]
 
-== Well-Posedness Example
+*Well-Posedness Example*
 
-Let $X = Y = RR $ and $A:RR arrow.r RR, x arrow.r x^2$
+Example 1)
+
 Is this example well posed?
+Let $X , Y = RR $ and $A:RR -> RR, x arrow.r x^2$
+
+Answer:
 
 - Existence: for $y = -1$ no solution exists (if it would be $RR^+$ it would be okay)
-- Uniqueness: for $y = 1$, $x = plus.minus 1$
+- Uniqueness: for $y = 1$, $x = plus.minus 1$ which is not unique
 - Stability: yes, since $A$ is continuous
 
+Example 2)
 
-== Definition: Inner Product
+Let $X, Y = RR^2$ and $A = mat(2, 3; 1, 2) in RR^(2 times 2)$. Is the inverse problem $A x = y$ for $y in Y$ well-posed?
+
+1. *EXISTENCE:* $exists A^(-1)$? Since $det(A) = 4 - 3 = 1 != 0$, the matrix is invertible.
+2. *UNIQUENESS:* Yes, because $det(A) != 0$.
+3. *STABILITY:* Yes, as $A^(-1)$ is continuous.
+
+== Inner Product
 
 #definition(title: "Inner Product")[
-  An inner product is a mapping
+  An inner product on a vector space $Y$ over a $FF$ is a map $ ⟨., .⟩: Y times Y -> FF $  with the following properties:
 
-  $ ⟨., .⟩: Y times Y -> FF $
-
-  with properties:
-
-  1. Symmetry: $⟨x, y⟩ = ⟨y, x⟩ quad x,y in Y$
-  2. Additivity: $⟨x + z, y⟩ = ⟨x, y⟩ + ⟨z, y⟩ quad x,y,z in Y$
-  3. Homogeneity: $⟨a x, y⟩ = a ⟨x, y⟩ quad x,y in Y quad a in RR$
+  1. Symmetry: $⟨x, y⟩ = overline(⟨y, x⟩) quad x,y in Y$
+  2. Additivity: $⟨x , y + z ⟩ = ⟨x, y⟩ + ⟨x, z⟩ quad x,y,z in Y$
+  3. Homogeneity: $⟨lambda x, y⟩ = lambda ⟨x, y⟩ quad x,y in Y quad lambda in RR$
   4. Positivity: $⟨x, x⟩ >= 0$ and $⟨x, x⟩ = 0 <==> x = 0$
 ]
 
 
-== Definition: Vector Norm
+== Vector Norm
 
 #definition(title: "Inner Product")[
   A vector norm is a vector space Y over a field $F$ is a map $norm(.): Y -> RR$ with:
 
-  1. Non-negativity:$norm(x) >= 0$
-  2. Definiteness:$norm(x) = 0 <==> x = 0$
-  3. Homogeneity: $norm(a x) = abs(a) norm(x)$
-  4. Triangle inequality: $norm(x + y) <= norm(x) + norm(y)$
+  + *NON-NEGATIVITY* $norm(x) >= 0 quad forall x in V, norm(x) = 0 <=> x = 0$
+  + *POSITIVE HOMOGENEITY* $norm(lambda x) = |lambda| norm(x) space forall x in Y, lambda in FF$
+  + *TRIANGLE INEQUALITY* $norm(x + y) <= norm(x) + norm(y) space x, y in V$
 ]
 
+*Example: $l_p$-norm*
+$ norm(x)_p = root(p, sum_(i=1)^n |x_i|^p) quad x in X subset RR^n $
 == Definition: Matrix Norm
 
 #definition(title: "Inner Product")[
-  Let $norm(.)_a$ on $RR^n$ and $norm(.)_b$ on $RR^m$.
+  Let $norm(dot)_a$ and $norm(dot)_b$ be vector norms on $RR^n$ and $RR^m$, respectively.
+  Given a matrix $A in RR^(m times n)$, the *induced matrix norm* $norm(A)_(a,b)$ is defined as:
 
-  For $A in RR^(m times n)$ the induced matrix norm is $norm(A)_(a,b) = sup_(x != 0) (norm(A x)_b / norm(x)_a)$ 
+  $ norm(A)_(a,b) = max_(x in RR^n : norm(x)_a <= 1)  norm(A x)_b = sup_{x in RR^n \\ {0} }(norm(A x)_b) / (norm(x)_a) $
+
+  $ norm(A x)_b <= norm(A)_(a b) norm(x)_a $
 ]
+
+*Matrix Norm Examples*
+- If $a,b=2$: $norm(A)_(2,2) =norm(A)_(2)  = sigma_(max) (A)=sqrt(lambda_max (A^T A))$ 
+- If $a,b=1$: $norm(A)_(1,1)=norm(A)_(1)= max_j sum_i |A_(i j)|$ 
+- If $a,b=infinity$: $norm(A)_infinity = max_i sum_j |A_(i j)|$ 
 
 == Injection, Surjection, Bijection
 
-Let $A: X -> Y$
+These properties of mappings $A: X -> Y$ are defined as
 
-- Injective: $ A x_1 = A x_2 => x_1 = x_2 $
-- Surjective: $forall y in Y, exists x in X: A x = y$
-- Bijective: injective and surjective
+- *Injection:* $A: X -> Y$ is injective if $A x_1 = A x_2 => x_1 = x_2$.
+- *Surjection:* $A: X -> Y$ is surjective if $forall y in Y, exists x in X : A x = y$.
+- *Bijection:* $A: X -> Y$ is bijective if it is both injective and surjective. $forall y in Y, exists! x in X : A x = y <=> exists A^(-1):x=A^(-1)y$.
 
 
 == Null Space and Range
 
-- Null space: $N(A) = { x in X | A x = 0 }$
-- Range: $R(A) = { A x | x in X }$
+Let $A: X -> Y$ where $X, Y$ are vector spaces.
+- *Nullspace of A:* $N(A) = {x in X : A x = 0}$
+- *Range space of A:* $R(A) = {A x in Y : x in X}$
 
-== Connection to Hadamard
+== Connection to Hadamard's Definition
 
-- Existence ⇔ $R(A) = Y$
-- Uniqueness ⇔ $N(A) = {0}$
-- Well-posed ⇔ $A$ bijective (and stable)
+- *Existence* $<=>$ Surjection $<=>$ $R(A) = Y$
+- *Uniqueness* $<=>$ Injection $<=>$ $N(A) = {0}$
+- *Existence & Uniqueness* $<=>$ Bijection
 
+== Definition of the Linear Inverse Problem
+
+Given $A: X -> Y$ and observation $y in Y$ the inverse problem is called linear if $A$ is linear which means that 
+$A(alpha x_1 + beta x_2) = alpha A(x_1) + beta A(x_2)$
+
+Example:
+
+$A dots$ is the Radon transform
+
+$ (A x)_i = y_i = integral_(Gamma_i) x(s) d s $
+
+$ A(hat(x)) &= A(lambda_1 dot x_1 + lambda_2 x_2) = hat(y)_i = integral_(Gamma_i) hat(x)(s) d s = integral_(Gamma_i) lambda_1 x_1(s) + lambda_2 dot x_2(s) d s \ 
+&= lambda_1 underbrace(integral_(Gamma_i) x_1(s) d s, y_i^1) + lambda_2 underbrace(integral_(Gamma_i) x_2(s) d s, y_i^2) = lambda_1 y_i^1 + lambda_2 y_i^2 = lambda_1 A(x_1)_i + lambda_2 A(x_2)_i $
+
+Nullspace of linear A
+$=> {0} in cal(N)(A)$
+
+== Decomposition of Square Matrices
+
+Let $A in RR^(n times n)$, recall Eigenvalues $lambda_i$ and Eigenvectors $v_i$:
+$ A v_i = lambda_i v_i space "for" i = 1, dots, n $
+$ det(A - lambda I) = 0 $
+
+If $v_i$ are linearly independent: $A v_i = lambda_i v_i => A Q = Q Lambda => A = Q Lambda Q^(-1)$
+Where $Q = (v_1, dots, v_n)$.
+
+Remark: If $A$ is hermitian $<=> A^* = A$, we have that all $lambda_i$ are real & $v_i$ are orthonormal.
+
+$ v_i^T v_j = 0 quad "for" i != j $
+
+$ A = Q Lambda Q^T $
 
 == Singular Value Decomposition
 
-Let $A in RR^(m times n)$ then $A = U Sigma V^T$ where $Sigma = (sigma_1, dots, sigma_p)$ with $sigma_i > 0$ and $p = (A)$.
+Let $X = RR^n, Y = RR^m$ be an inverse problem $A x=y$ with a $A in RR^(m times n)$. The Goal:
+$ A = U Lambda V^T $
+- $U in RR^(m times p)$, $Lambda in RR^(p times p)$, $V in RR^(p times n)$
+- $p$ is the number of non-zero singular values $sigma_1 >= sigma_2 >= dots >= sigma_p > 0$.
+
+*Link between SVD and Eigendecompostion*
+
+$ A in RR^(m times n) $ 
+$ cases(
+  (1) quad A x = y,
+  (2) quad A^T hat(x) = hat(y)
+) 
+<=> 
+underbrace(mat(0, A; A^T, 0), B in RR^((m+n) times (m+n))) dot vec(hat(x), x) = vec(y, hat(y))$
+
+#line(length: 20%, stroke: 1pt)
+
+$B = B^T:$ $quad B w_i = lambda_i w_i$
+
+$ mat(0, A; A^T, 0) vec(u_i, v_i) = lambda_i vec(u_i, v_i) <=> cases(
+  "1st:" quad A v_i = lambda_i u_i,
+  "2nd:" quad A^T u_i = lambda_i v_i
+) $
+
+#grid(
+  columns: (1fr, 1fr),
+  [
+    *1st:*
+    $ lambda_i A v_i = lambda_i^2 u_i $
+    $ A (lambda_i v_i) = lambda_i^2 u_i $
+    $ A A^T u_i = lambda_i^2 u_i $
+    $ U = (u_1 | dots | u_m) $
+  ],
+  [
+    *2nd:*
+    $ A^T (lambda_i u_i) = lambda_i^2 v_i $
+    $ A^T A v_i = lambda_i^2 v_i $
+    $ V = (v_1 | dots | v_n) $
+  ]
+)
 
 == Least Squares (m > n)
 
-Solve $A x = y$ by minimizing $arg min_(x) norm(A x - y)^2$
-Normal equations:
-$A^T A x = A^T y$
+$A x = y quad A in RR^(m times n) quad m > n "overdetermined system"$
 
-== Minimum Norm Solution (n > m)
+$ e_i = a_i^T x - y_i $
 
-Underdetermined system $A x = y$
+#underline[*Idea:*] minimize the squared error
 
-Choose the minimum norm solution:
+$ hat(x) = arg min E(x) := 1/2 sum_(i=1)^m (a_i^T x - y_i)^2 = 1/2 ||A x - y||_2^2 = 1/2 ||e||_2^2 $
 
-$arg min_(x) norm(x)$ 
-$text("subject to") A x = y$
+#h(1cm) where $e = A x - y$
 
-Solution:
-$x = A^T (A A^T)^(-1) y$
+How do we solve this optimization problem?
+
+$ nabla E(x) = 0 = frac(diff e, diff x) frac(diff E, diff e) = frac(diff e, diff x) 1/2 2 e = A^T e = A^T (A x - y) = 0 $
+
+#underline[$ nabla E(x) in RR^n $]
+
+Least squares solution
+
+$ A in RR^(m times n) $
+
+$ nabla E = A^T (A x - y) = 0 $
+
+$ (A^T A) x = A^T y $
+
+$ x = (A^T A)^(-1) A^T y $
+
+ Example: $2 times 2$ CT reconstruction
+
+$ x in RR^4 quad y in RR^5 $
+
+$ A x = y $
+
+$ mat(
+  1, 0, 1, 0;
+  0, 1, 0, 1;
+  1, 1, 0, 0;
+  0, 0, 1, 1;
+  1, 0, 0, 1;
+) vec(x_1, x_2, x_3, x_4) = vec(y_1, y_2, y_3, y_4, y_5) $
+
+== Solving Inverse Problems ($p = n > m$)
+
+Let $A x = y$ with $A in RR^(m times n)$
+
+*Remark:* Since $n > m$, $(A^T A)^(-1)$ does not exist. This is an *underdetermined system*.
+Multiple solutions exactly solve $A x = y$. We pick one using a priori knowledge:
+
+$ min_x 1/2 ||x||_2^2 quad "s.t." quad A x = y $ 
 
 
-== Generalized Inverse
+=== Recap: Lagrange Multipliers 
+To solve $min E(x)$ subject to $C(x) = 0$
 
-Using the SVD:
+Define Lagrangian: $cal(L)(x, tau) = E(x) + angle.l C(x), tau angle.r$ 
 
-$A^dagger = V Sigma^(-1) U^T$
+Find solution by $nabla cal(L)(x, tau) = 0$
 
-This interpolates between least squares and minimum norm solutions.
+$ cases(diff / (diff x) cal(L) = (diff E) / (diff x) + (diff C) / (diff x) tau = 0, diff / (diff tau) cal(L) = C(x) = 0) $ 
+
+
+=== Minimum Length Solution 
+
+Find $x "s.t." A x=y$ and $norm(x)_2^2 arrow.r min$
+
+$ E(x) = 1/2 ||x||_2^2 quad C(x) = y - A x = 0 <=> h(x, tau) = 1/2 norm(x)^2_2 + angle.l y-A x, tau angle.r $ 
+
+$ diff / (diff x) cal(L) = x - A^T tau = 0 <=> x = A^T tau $ 
+$ diff / (diff tau) cal(L) = y - A x = 0 <=> y = A x= A(A^T tau) = (A A^T) tau <=> tau = (A A^T)^(-1) y $ 
+
+$ x = A^T (A A^T)^(-1) y $ 
 
 
 == Regularization
