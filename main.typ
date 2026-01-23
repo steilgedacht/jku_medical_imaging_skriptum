@@ -379,34 +379,135 @@ $ diff / (diff tau) cal(L) = y - A x = 0 <=> y = A x= A(A^T tau) = (A A^T) tau <
 $ x = A^T (A A^T)^(-1) y $ 
 
 
+== Generalized Inverse
+
+Let $X = RR^n$, $Y = RR^m$ and the inverse problem $A x = y$ with $A in RR^(m times n)$.
+
+Define the *generalized inverse* as:
+$ A_g^(-1) = (U_p Lambda_p V_p^T)^(-1) = (V_p^T)^(-1) Lambda_p^(-1) U_p^(-1) = V_p Lambda_p^(-1) U_p^T $
+
+
+=== Check if GI computes Exact, LS, ML:
+
+==== I. $p = m = n$:
+$ A_g^(-1) = V_p Lambda_p^(-1) U_p^T quad | dot A = U_p Lambda_p V_p^T $
+$ A_g^(-1) A = V_p Lambda_p^(-1) underbrace(U_p^T U_p, I) Lambda_p V_p^T = V_p underbrace(Lambda_p^(-1) Lambda_p, I) V_p^T = I $
+
+==== II. $p = m > n$:
+$ x &= (A^T A)^(-1) A^T y \
+   &= ((U_p Lambda_p V_p^T)^T (U_p Lambda_p V_p^T))^(-1) (U_p Lambda_p V_p^T)^T y \
+   &= (V_p Lambda_p underbrace(U_p^T U_p, "Id") Lambda_p V_p^T)^(-1) (V_p Lambda_p U_p^T) y \
+   &= (V_p Lambda_p^2 V_p^T)^(-1) V_p Lambda_p U_p^T y \
+   &= V_p Lambda_p^(-2) underbrace(V_p^T V_p, "Id") Lambda_p U_p^T y \
+   &= V_p Lambda_p^(-1) U_p^T y = A_g^(-1) y $
+
+
+==== III. $p = m < n$: 
+$ x &= A^T (A A^T)^(-1) y \
+   &= (V_p Lambda_p U_p^T) (U_p Lambda_p V_p^T V_p Lambda_p U_p^T)^(-1) y \
+   &= (V_p Lambda_p U_p^T) (U_p Lambda_p^2 U_p^T)^(-1) y \
+   &= V_p Lambda_p underbrace(U_p^T U_p ) Lambda_p^(-2) U_p^T y \
+   &= V_p Lambda_p^(-1) U_p^T y = A_g^(-1) y $
+
+=== IV. $0 < p < min(m, n)$:
+However, $A_g^(-1)$ still exists. It computes a solution that *interpolates between LS & ML solutions*.
+
 == Regularization
 
-Instead of solving $A x = y$, solve
+Consider polynomial regression
+$ p(a) = sum_(i=1)^n x_i a^(i-1) = x_1 dot 1 + x_2 dot a + ... + x_n a^(n-1) $
 
-$arg min_(x) norm(A x - y)^2 + lambda R(x)$
+Where $x$ represents the *coefficients of the polynomial*.
+
+$ arrow.l.r.double A x = mat(
+  1, a_1, a_1^2, ..., a_1^(n-1);
+  dots.v, dots.v, dots.v, , dots.v;
+  1, a_m, a_m^2, ..., a_m^(n-1);
+) dot vec(x_1, dots.v, x_n) = vec(y_1, dots.v, y_m) $
+
+The matrix $A$ has dimensions $[m times n]$.
+
+*How to choose $n$?*
+- Manually
+- Very large + **regularization**
 
 
-== Typical Regularization Terms
+=== Incorporating Prior Knowledge
 
-- Tikhonov: $R(x) = norm(x)^2$
-- L2: $R(x) = norm(x)^2 $
-- H1: $R(x) = norm(nabla x)^2$
-- L1: $R(x) = norm(x)_1$
-- Total Variation: $R(x) = norm(nabla x)_1$
+*Least squares problem + regularization:*
+$ hat(x) = arg min_x 1/2 ||A x - y||_2^2 + R(x) $
+
+*Example:* $R(x) = lambda/2 ||x||_2^2$ (**Tikhonov regularization**, aka weight decay)
+
+*Derivation:*
+$ 1/2 ||A x - y||^2 + lambda/2 ||x||_2^2 arrow.r min $
+$ 1/2 dot 2 dot A^T (A x - y) + lambda/2 dot 2 x = 0 $
+$ A^T A x + lambda x = A^T y arrow.l.r.double x = (A^T A + lambda I d)^(-1) A^T y $
 
 
-== Tikhonov Optimality Condition
+=== Regularization Types and Intuition
 
-$(A^T A + lambda I) x = A^T y$
+#table(
+  columns: (auto, 1fr, 2fr),
+  inset: 10pt,
+  align: horizon,
+  table.header([*Name*], [*$R(x)$*], [*Intuition*]),
+  [Tikhonov], [$lambda ||G x||_2^2$], [Existence of Inverse],
+  [$L^2$], [$lambda ||x||_2^2$ \ (#emph[G = Id])], [Minimum length/norm],
+  [$H^1$], [$lambda ||nabla x||_2^2$ \ (#emph[G = $nabla$])], [Smooth gradients],
+  [$L^1$], [$lambda ||x||_1$], [Sparse solutions],
+  [Total variation (TV)], [$lambda ||nabla x||_1$], [Sparse gradients (piece-wise constant solutions)],
+)
 
-== Probabilistic Interpretation
+== The Proximal Mapping
 
-Assume noisy measurements: $y = A x + epsilon$
-$epsilon ~ (0, sigma^2 I)$
+=== 1. Projection onto a set $S$
+$ "proj"_S (x) = arg min_(y in S) 1/2 ||x - y||_2^2 $
 
-Bayes’ rule yields: $arg max_(x) log(p(x | y))$ which is equivalent to $arg min_(x) norm(A x - y)^2 - log(p(x))$
+=== 2. Proximal mapping of a function $g(x)$
+$ "prox"_g (x) = arg min_y 1/2 ||x - y||_2^2 + g(y) $
 
-Hence, regularization corresponds to MAP estimation.
+If we define $g(y)$ as the indicator function:
+$ g(y) = cases(0 &"if" y in S, infinity &"else") $
+
+==== Example: $g(x) = |x|$
+To find the proximal mapping for the absolute value (L1 norm), we solve:
+$ "prox"_(|dot|) (x) = arg min_y 1/2 (x - y)^2 + |y| $
+
+The subdifferential of $|x|$ is:
+$ d/(d x) |x| = cases(1 &x > 0, [-1, 1] &x = 0, -1 &x < 0) $
+
+To minimize, we set the subgradient to zero:
+$ x - y + partial g(y) "contents" 0 $
+
+- *Case $y > 0$:* $-(x - y) + 1 = 0 arrow.double y = x - 1 > 0 arrow.double x > 1$
+- *Case $y < 0$:* $-x + y - 1 = 0 arrow.double y = x + 1 < 0 arrow.double x < -1$
+- *Case $y = 0$:* $-x + 0 + [-1, 1] "contents" 0 arrow.double x in [-1, 1]$
+
+Thus, the **Soft Thresholding** operator is:
+$ "prox"_(|dot|) (x) = cases(x - 1 &"if" x > 1, x + 1 &"if" x < -1, 0 &"else") $
+
+
+== Regularization IV: A Probabilistic Perspective
+
+Assume observed measurements $y$ follow a Gaussian distribution:
+$ y ~ cal(N)(A x, Sigma) <==> p(y|x) = |2 pi Sigma|^(-1/2) exp(-1/2 ||A x - y||_(Sigma^-1)^2) $
+
+Moreover, we assume the solution (or its gradients) follows a Gaussian prior:
+$ nabla x ~ cal(N)(0, eta "Id") <==> p(x) = |2 pi eta I|^(-1/2) exp(-1/2 eta ||x||^2) $
+
+Using **Bayes' Rule** to find the posterior distribution:
+$ p(x|y) = (p(y|x) dot p(x)) / p(y) $
+
+Taking the logarithm:
+$ log p(x|y) = log p(y|x) + log p(x) - log p(y) $
+$ log p(x|y) = -1/2 ||A x - y||_(Sigma^-1)^2 - log Z_1 - 1/(2 eta) ||x||^2 - log Z_2 - log p(y) $
+
+Since $Z_1, Z_2,$ and $p(y)$ are constants that do not depend on $x$:
+$ max_x log p(x|y) = max_x -1/2 ||A x - y||_Sigma^-1^2 - 1/(2 eta) ||x||^2 $
+$ min_x -log p(x|y) = min_x underbrace(1/2 ||A x - y||_(Sigma^-1)^2, D(x,y) " (Data Fidelity)") + underbrace(1/(2 eta) ||x||^2, R(x) " (Regularizer)") $
+
+*Conclusion:* The variational formulation of inverse problems corresponds to the **Maximum A Posteriori (MAP) estimation**.
 
 = X-rays and CT
 
