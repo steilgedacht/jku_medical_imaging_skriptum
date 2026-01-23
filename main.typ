@@ -77,27 +77,30 @@ $ accent(u, hat) = F^(-1) (F(f)/(I sigma^2 F(k))) $
 
 == What is an Inverse Problem? (formal)
 
-Given a matrix $A in RR^(m times n)$ and a vector $x in RR^n$ the forward problem is $y = A x in RR^m$ 
+#definition(title: "Inverse Problem")[
+  Given a matrix $A in RR^(m times n)$ and a vector $x in RR^n$ the forward problem is $y = A x in RR^m$ 
 
-The inverse problem is: Given $A$ and $y$, estimate $x$.
+  The inverse problem is: Given $A$ and $y$, estimate $x$.
+]
 
-== Definition: Vector Space
+== Vector Space 
 
-A non-empty set $V$ is a vector space over a field $FF in {RR, CC}$ if there are operations  of vector addition: $V times V -> V$  and scalar multiplication: $FF times V -> V$ satisfying the following axioms.
+#definition(title: "Vector Space")[
+  A non-empty set $V$ is a vector space over a field $FF in {RR, CC}$ if there are operations  of vector addition: $V times V -> V$  and scalar multiplication: $FF times V -> V$ satisfying the following axioms.
+  *Vector addition*
+  1. $u+v in V quad forall u,v in V$
+  2. $u + v = v + u$
+  3. $(u + v) + w = u + (v + w) quad forall u,v,w in V$
+  4. $exists 0 in V: u + 0 = u$ 
+  5. $forall u in V: exists -u: u + (-u) = 0$
 
-*Vector addition*
-1. $u+v in V quad forall u,v in V$
-2. $u + v = v + u$
-3. $(u + v) + w = u + (v + w) quad forall u,v,w in V$
-4. $exists 0 in V: u + 0 = u$ 
-5. $forall u in V: exists -u: u + (-u) = 0$
-
-*Scalar multiplication*
-1. $a u in V$
-2. $a (u + v) = a u + a v$
-3. $(a + b) u = a u + b u$
-4. $a (b u) = (a b) u$
-5. $1 u = u$
+  *Scalar multiplication*
+  1. $a u in V$
+  2. $a (u + v) = a u + a v$
+  3. $(a + b) u = a u + b u$
+  4. $a (b u) = (a b) u$
+  5. $1 u = u$
+]
 
 
 == Vector Space Examples
@@ -113,20 +116,24 @@ A non-empty set $V$ is a vector space over a field $FF in {RR, CC}$ if there are
 
 == Definition: Inverse Problem
 
-Let $X, Y$ be vector spaces and $A: X -> Y$. 
-The forward problem is $y = A x $.
-The inverse problem is to find $x in X$ such that $ A x = y $.
+#definition(title: "Inverse Problem")[
+  Let $X, Y$ be vector spaces and $A: X -> Y$. 
+  The forward problem is $y = A x $.
+  The inverse problem is to find $x in X$ such that $ A x = y $.
+]
 
 == Definition: Well-Posedness (Hadamard)
 
-We can now start to categorize inverse problems:
-The inverse problem $A x = y$ is well-posed if:
+#definition(title: "Well-Posedness")[
+  We can now start to categorize inverse problems:
+  The inverse problem $A x = y$ is well-posed if:
 
-1. *Existence:* a solution exists (EXISTENCE)
-2. *Uniqueness:* the solution is unique (UNIQUENESS)
-3. *Stability:* the solution depends continuously on the data (STABILITY)
+  1. *Existence:* a solution exists (EXISTENCE)
+  2. *Uniqueness:* the solution is unique (UNIQUENESS)
+  3. *Stability:* the solution depends continuously on the data (STABILITY)
 
-If one condition fails, the problem is ill-posed.
+  If one condition fails, the problem is ill-posed.
+]
 
 == Well-Posedness Example
 
@@ -140,32 +147,38 @@ Is this example well posed?
 
 == Definition: Inner Product
 
-An inner product is a mapping
+#definition(title: "Inner Product")[
+  An inner product is a mapping
 
-$ ⟨., .⟩: Y times Y -> FF $
+  $ ⟨., .⟩: Y times Y -> FF $
 
-with properties:
+  with properties:
 
-1. Symmetry: $⟨x, y⟩ = ⟨y, x⟩ quad x,y in Y$
-2. Additivity: $⟨x + z, y⟩ = ⟨x, y⟩ + ⟨z, y⟩ quad x,y,z in Y$
-3. Homogeneity: $⟨a x, y⟩ = a ⟨x, y⟩ quad x,y in Y quad a in RR$
-4. Positivity: $⟨x, x⟩ >= 0$ and $⟨x, x⟩ = 0 <==> x = 0$
+  1. Symmetry: $⟨x, y⟩ = ⟨y, x⟩ quad x,y in Y$
+  2. Additivity: $⟨x + z, y⟩ = ⟨x, y⟩ + ⟨z, y⟩ quad x,y,z in Y$
+  3. Homogeneity: $⟨a x, y⟩ = a ⟨x, y⟩ quad x,y in Y quad a in RR$
+  4. Positivity: $⟨x, x⟩ >= 0$ and $⟨x, x⟩ = 0 <==> x = 0$
+]
+
 
 == Definition: Vector Norm
 
-A vector norm is a vector space Y over a field $F$ is a map $norm(.): Y -> RR$ with:
+#definition(title: "Inner Product")[
+  A vector norm is a vector space Y over a field $F$ is a map $norm(.): Y -> RR$ with:
 
-1. Non-negativity:$norm(x) >= 0$
-2. Definiteness:$norm(x) = 0 <==> x = 0$
-3. Homogeneity: $norm(a x) = abs(a) norm(x)$
-4. Triangle inequality: $norm(x + y) <= norm(x) + norm(y)$
-
+  1. Non-negativity:$norm(x) >= 0$
+  2. Definiteness:$norm(x) = 0 <==> x = 0$
+  3. Homogeneity: $norm(a x) = abs(a) norm(x)$
+  4. Triangle inequality: $norm(x + y) <= norm(x) + norm(y)$
+]
 
 == Definition: Matrix Norm
 
-Let $norm(.)_a$ on $RR^n$ and $norm(.)_b$ on $RR^m$.
+#definition(title: "Inner Product")[
+  Let $norm(.)_a$ on $RR^n$ and $norm(.)_b$ on $RR^m$.
 
-For $A in RR^(m times n)$ the induced matrix norm is $norm(A)_(a,b) = sup_(x != 0) (norm(A x)_b / norm(x)_a)$ 
+  For $A in RR^(m times n)$ the induced matrix norm is $norm(A)_(a,b) = sup_(x != 0) (norm(A x)_b / norm(x)_a)$ 
+]
 
 == Injection, Surjection, Bijection
 
@@ -601,22 +614,3 @@ def hello_world():
   ),
   caption: [A sample table with clean styling.],
 )
-
-// ============================================================================
-// Part II
-// ============================================================================
-
-#part("Advanced Topics")
-
-= Another Chapter
-
-Continue your document with more chapters. Each chapter starts
-on a new page with the elegant ClassicThesis heading style.
-
-== References and Citations
-
-Add your bibliography and citations as needed.
-
-= Conclusion
-
-Wrap up your work with a conclusion chapter.
