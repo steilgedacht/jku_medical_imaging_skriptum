@@ -5,10 +5,13 @@
   subtitle: "Skriptum",
   author: "Benjamin Bergmann",
   date: "2026",
-  // Optional: dedication and abstract
-  // dedication: [To those who seek elegant typography.],
-  // abstract: [This is the abstract of your work...],
 )
+#show heading: it => {
+  set text(tracking: 0pt)
+  it.body
+}
+
+#set par(first-line-indent: 0pt)
 
 
 
@@ -16,225 +19,122 @@
 
 == What is an Inverse Problem?
 
-There exit Forward Problem which estimate the effect from the cause and then there is inverse Problem which estimates the cause from the effect.
+There exit a "Forward Problem" which estimate the effect from the cause and then there is inverse Problem which estimates the cause from the effect. In the medical context that would be finding the cause illness given from a certain syntom/effect.  
 Typically, the forward problem is ”easy” and well described. The challenge here is: We need to solve the inverse problem given only the observed effect of the
 forward problem. 
 
-As an Example: 
-The forward problem is: The street becomes wet when it rains.
-The backward problem would be: We observe that the street is wet. Why?
+As an Example from the real world: 
+forward problem: The street becomes wet when it rains.
+backward problem would be: We observe that the street is wet. Why?
 
 There are multiple different causes:
 • Rain
 • Fog
 • Cleaning
 
-Another example: Computed Tomography
+And this can be already problematic as we have multiple different options for what the cause could be.
 
-= Inverse Problems
-
-VL Special Topics in AI  
-Deep Learning in Medical Imaging  
-
-Johannes Kepler University Linz  
-Altenberger Straße 69  
-4040 Linz, Austria  
-jku.at
-
-
-== What is an Inverse Problem? (informal)
-
-*Forward Problem*  
-Estimate the effect from the cause.
-
-*Inverse Problem*  
-Estimate the cause from the effect.
-
-Typically, the forward problem is “easy” and well described.
-
-*Challenge:*  
-We need to solve the inverse problem given only the observed effect of the forward problem.
-
-
-== Example (simple)
-
-*Forward Problem*  
-The street becomes wet if it rains.
-
-*Inverse Problem*  
-We observe that the street is wet. Why?
-
-There are multiple different causes:
-- Rain
-- Fog
-- Cleaning
-- …
-
-
-== Example: Computed Tomography
+=== Example: Computed Tomography
 
 *Forward Problem*  
 X-ray emitter and detector rotating around the body.  
 Detectors measure the number of photons passing through the body and hitting the detector  
-(attenuation of X-ray signal).
 
 *Inverse Problem*  
 Reconstruct the interior of the body from the measured detector signals.
 
-== What is an Inverse Problem? (informal)
+Note that a CT Scan can be very large in file size. A scan from shoulder to belt line is already 18GB of data for just a single scan.
+So we bascially have $y$ and we want to get to $x$
+
+=== Example: Deconvolution
 
 *Forward Problem*  
-Estimate the effect from the cause.
+Observe a blurred image $ f = k * u $ on a domain $ Omega subset RR^2 $.
 
 *Inverse Problem*  
-Estimate the cause from the effect.
+Estimate the sharp image $ u: Omega -> RR $ given the blur kernel $ k: Omega times Omega -> RR_+ $ 
 
-Typically, the forward problem is easy and well described.
+On of the oldest clasical methods to do that is the Wiener Filter.
+Deconvolution is linked to Fourier $F$:
 
-*Challenge:*  
-We need to solve the inverse problem given only the observed effect of the forward problem.
+$ f= k * u $ 
 
+$ F(f) = F(k) dot.o F(u) $
 
-== Example (simple)
+If we wanna do the inverse:
 
-*Forward Problem*  
-The street becomes wet if it rains.
+$ F^(-1) {F(f)} = F^(-1){F(k) dot.o F(u)} = f $  
 
-*Inverse Problem*  
-We observe that the street is wet. Why?
+where $dot.o$ is a pointwise multiplication
 
-Possible causes:
-- Rain
-- Fog
-- Cleaning
-- …
+So a estimate $accent(u, hat)$ would be 
 
+$ accent(u, hat) = F^(-1) (F(f)/F(k)) $
 
-== Example: Computed Tomography
+The only problem here is when we have 0 frequencies in the kernel. The Wiener Filtering introduces
 
-*Forward Problem*  
-An X-ray emitter and detector rotate around the body.  
-Detectors measure the number of photons passing through the body  
-(attenuation of the X-ray signal).
-
-*Inverse Problem*  
-Reconstruct the interior of the body from the detector measurements.
-
-
-== Example: Deconvolution
-
-*Forward Problem*  
-Observe a blurred image
-
-[$ f = k * u $]
-
-on a domain
-
-[$ Omega subset RR^2 $]
-
-*Inverse Problem*  
-Estimate the sharp image
-
-[$ u: Omega -> RR $]
-
-given the blur kernel
-
-[$ k: Omega times Omega -> RR_+ $]
-
+$ accent(u, hat) = F^(-1) (F(f)/(I sigma^2 F(k))) $
 
 == What is an Inverse Problem? (formal)
 
-Given a matrix
+Given a matrix $A in RR^(m times n)$ and a vector $x in RR^n$ the forward problem is $y = A x in RR^m$ 
 
-[$ A in RR^(m times n) $]
-
-and a vector
-
-[$ x in RR^n $]
-
-the forward problem is
-
-[$ y = A x in RR^m $]
-
-The inverse problem is:  
-Given $A$ and $y$, estimate $x$.
-
+The inverse problem is: Given $A$ and $y$, estimate $x$.
 
 == Definition: Vector Space
 
-A non-empty set $V$ is a vector space over a field
-
-[$ FF in {RR, CC} $]
-
-if there are operations
-
-- vector addition: $V times V -> V$
-- scalar multiplication: $FF times V -> V$
-
-satisfying the following axioms.
+A non-empty set $V$ is a vector space over a field $FF in {RR, CC}$ if there are operations  of vector addition: $V times V -> V$  and scalar multiplication: $FF times V -> V$ satisfying the following axioms.
 
 *Vector addition*
-1. $u + v = v + u$
-2. $(u + v) + w = u + (v + w)$
-3. There exists $0 in V$ such that $u + 0 = u$
-4. For every $u in V$ there exists $-u$ such that $u + (-u) = 0$
+1. $u+v in V quad forall u,v in V$
+2. $u + v = v + u$
+3. $(u + v) + w = u + (v + w) quad forall u,v,w in V$
+4. $exists 0 in V: u + 0 = u$ 
+5. $forall u in V: exists -u: u + (-u) = 0$
 
 *Scalar multiplication*
-1. $a (u + v) = a u + a v$
-2. $(a + b) u = a u + b u$
-3. $a (b u) = (a b) u$
-4. $1 u = u$
+1. $a u in V$
+2. $a (u + v) = a u + a v$
+3. $(a + b) u = a u + b u$
+4. $a (b u) = (a b) u$
+5. $1 u = u$
 
 
 == Vector Space Examples
 
-- [$ RR^n = (x_1, dots, x_n)^T $]
-- Continuous functions: [$ C(RR^n, RR) $]
-- Once continuously differentiable functions: [$ C^1(RR^n, RR) $]
+- $RR^n = (x_1, dots, x_n)^T$
+- Continuous functions: $C(RR^n, RR)$
+- Once continuously differentiable functions: $C^1(RR^n, RR)$
 - Lebesgue space:
-  [$ L^2(RR^n) = { f | integral_(RR^n) abs(f(x))^2 d x < infinity } $]
+  $L^2(RR^n) = { f | integral_(RR^n) abs(f(x))^2 d x < infinity }$
 - Sobolev space:
-  [$ H^1(RR^n) = { f in L^2 | integral_(RR^n) abs(nabla f(x))^2 d x < infinity } $]
+  $H^1(RR^n) = { f in L^2 | integral_(RR^n) abs(nabla f(x))^2 d x < infinity }$
 
 
 == Definition: Inverse Problem
 
-Let $X, Y$ be vector spaces and
-
-[$ A: X -> Y $]
-
-The forward problem is
-
-[$ y = A x $]
-
-The inverse problem is to find $x in X$ such that
-
-[$ A x = y $]
-
+Let $X, Y$ be vector spaces and $A: X -> Y$. 
+The forward problem is $y = A x $.
+The inverse problem is to find $x in X$ such that $ A x = y $.
 
 == Definition: Well-Posedness (Hadamard)
 
+We can now start to categorize inverse problems:
 The inverse problem $A x = y$ is well-posed if:
 
-1. *Existence:* a solution exists
-2. *Uniqueness:* the solution is unique
-3. *Stability:* the solution depends continuously on the data
+1. *Existence:* a solution exists (EXISTENCE)
+2. *Uniqueness:* the solution is unique (UNIQUENESS)
+3. *Stability:* the solution depends continuously on the data (STABILITY)
 
 If one condition fails, the problem is ill-posed.
 
-
 == Well-Posedness Example
 
-Let
+Let $X = Y = RR $ and $A:RR arrow.r RR, x arrow.r x^2$
+Is this example well posed?
 
-[$ X = Y = RR $]
-
-and
-
-[$ A(x) = x^2 $]
-
-- Existence: for $y = -1$ no solution exists
-- Uniqueness: for $y = 1$, $x = +-1$
+- Existence: for $y = -1$ no solution exists (if it would be $RR^+$ it would be okay)
+- Uniqueness: for $y = 1$, $x = plus.minus 1$
 - Stability: yes, since $A$ is continuous
 
 
@@ -242,137 +142,80 @@ and
 
 An inner product is a mapping
 
-[$ ⟨., .⟩: Y times Y -> FF $]
+$ ⟨., .⟩: Y times Y -> FF $
 
 with properties:
 
-1. Symmetry:
-   [$ ⟨x, y⟩ = ⟨y, x⟩ $]
-2. Additivity:
-   [$ ⟨x + z, y⟩ = ⟨x, y⟩ + ⟨z, y⟩ $]
-3. Homogeneity:
-   [$ ⟨a x, y⟩ = a ⟨x, y⟩ $]
-4. Positivity:
-   [$ ⟨x, x⟩ >= 0 $]  
-   [$ ⟨x, x⟩ = 0 <==> x = 0 $]
-
+1. Symmetry: $⟨x, y⟩ = ⟨y, x⟩ quad x,y in Y$
+2. Additivity: $⟨x + z, y⟩ = ⟨x, y⟩ + ⟨z, y⟩ quad x,y,z in Y$
+3. Homogeneity: $⟨a x, y⟩ = a ⟨x, y⟩ quad x,y in Y quad a in RR$
+4. Positivity: $⟨x, x⟩ >= 0$ and $⟨x, x⟩ = 0 <==> x = 0$
 
 == Definition: Vector Norm
 
-A norm is a mapping
+A vector norm is a vector space Y over a field $F$ is a map $norm(.): Y -> RR$ with:
 
-[$ norm(.): Y -> RR $]
-
-with:
-
-1. Non-negativity:
-   [$ norm(x) >= 0 $]
-2. Definiteness:
-   [$ norm(x) = 0 <==> x = 0 $]
-3. Homogeneity:
-   [$ norm(a x) = abs(a) norm(x) $]
-4. Triangle inequality:
-   [$ norm(x + y) <= norm(x) + norm(y) $]
+1. Non-negativity:$norm(x) >= 0$
+2. Definiteness:$norm(x) = 0 <==> x = 0$
+3. Homogeneity: $norm(a x) = abs(a) norm(x)$
+4. Triangle inequality: $norm(x + y) <= norm(x) + norm(y)$
 
 
 == Definition: Matrix Norm
 
 Let $norm(.)_a$ on $RR^n$ and $norm(.)_b$ on $RR^m$.
 
-For
-
-[$ A in RR^(m times n) $]
-
-the induced matrix norm is
-
-[$ norm(A)_(a,b) = sup_(x != 0) (norm(A x)_b / norm(x)_a) $]
-
+For $A in RR^(m times n)$ the induced matrix norm is $norm(A)_(a,b) = sup_(x != 0) (norm(A x)_b / norm(x)_a)$ 
 
 == Injection, Surjection, Bijection
 
-Let
+Let $A: X -> Y$
 
-[$ A: X -> Y $]
-
-- Injective:
-  [$ A x_1 = A x_2 => x_1 = x_2 $]
-- Surjective:
-  [$ forall y in Y, exists x in X: A x = y $]
+- Injective: $ A x_1 = A x_2 => x_1 = x_2 $
+- Surjective: $forall y in Y, exists x in X: A x = y$
 - Bijective: injective and surjective
 
 
 == Null Space and Range
 
-- Null space:
-  [$ N(A) = { x in X | A x = 0 } $]
-- Range:
-  [$ R(A) = { A x | x in X } $]
-
+- Null space: $N(A) = { x in X | A x = 0 }$
+- Range: $R(A) = { A x | x in X }$
 
 == Connection to Hadamard
 
-- Existence ⇔ [$ R(A) = Y $]
-- Uniqueness ⇔ [$ N(A) = {0} $]
+- Existence ⇔ $R(A) = Y$
+- Uniqueness ⇔ $N(A) = {0}$
 - Well-posed ⇔ $A$ bijective (and stable)
 
 
 == Singular Value Decomposition
 
-Let
-
-[$ A in RR^(m times n) $]
-
-Then
-
-[$ A = U Sigma V^T $]
-
-where
-
-[$ Sigma = (sigma_1, dots, sigma_p) $]
-
-with
-
-[$ sigma_i > 0 $]
-
-and $p = (A)$.
-
+Let $A in RR^(m times n)$ then $A = U Sigma V^T$ where $Sigma = (sigma_1, dots, sigma_p)$ with $sigma_i > 0$ and $p = (A)$.
 
 == Least Squares (m > n)
 
-Solve
-
-[$ A x = y $]
-
-by minimizing
-
-[$ arg min_(x) norm(A x - y)^2 $]
-
+Solve $A x = y$ by minimizing $arg min_(x) norm(A x - y)^2$
 Normal equations:
-
-[$ A^T A x = A^T y $]
-
+$A^T A x = A^T y$
 
 == Minimum Norm Solution (n > m)
 
-Underdetermined system
-
-[$ A x = y $]
+Underdetermined system $A x = y$
 
 Choose the minimum norm solution:
 
-[$ arg min_(x) norm(x) $]  
-[$ text("subject to") A x = y $]
+$arg min_(x) norm(x)$ 
+$text("subject to") A x = y$
 
 Solution:
-
-[$ x = A^T (A A^T)^(-1) y $]
+$x = A^T (A A^T)^(-1) y$
 
 
 == Generalized Inverse
 
 Using the SVD:
 
-[$ A^dagger = V Sigma^(-1) U^T $]
+$A^dagger = V Sigma^(-1) U^T$
 
 This interpolates between least squares and minimum norm solutions.
 
@@ -381,46 +224,30 @@ This interpolates between least squares and minimum norm solutions.
 
 Instead of solving $A x = y$, solve
 
-[$ arg min_(x) norm(A x - y)^2 + lambda R(x) $]
+$arg min_(x) norm(A x - y)^2 + lambda R(x)$
 
 
 == Typical Regularization Terms
 
-- Tikhonov:
-  [$ R(x) = norm(x)^2 $]
-- L2:
-  [$ R(x) = norm(x)^2 $]
-- H1:
-  [$ R(x) = norm(nabla x)^2 $]
-- L1:
-  [$ R(x) = norm(x)_1 $]
-- Total Variation:
-  [$ R(x) = norm(nabla x)_1 $]
+- Tikhonov: $R(x) = norm(x)^2$
+- L2: $R(x) = norm(x)^2 $
+- H1: $R(x) = norm(nabla x)^2$
+- L1: $R(x) = norm(x)_1$
+- Total Variation: $R(x) = norm(nabla x)_1$
 
 
 == Tikhonov Optimality Condition
 
-[$ (A^T A + lambda I) x = A^T y $]
-
+$(A^T A + lambda I) x = A^T y$
 
 == Probabilistic Interpretation
 
-Assume noisy measurements:
+Assume noisy measurements: $y = A x + epsilon$
+$epsilon ~ (0, sigma^2 I)$
 
-[$ y = A x + epsilon $]
-
-[$ epsilon ~ (0, sigma^2 I) $]
-
-Bayes’ rule yields:
-
-[$ arg max_(x) log(p(x | y)) $]
-
-which is equivalent to
-
-[$ arg min_(x) norm(A x - y)^2 - log(p(x)) $]
+Bayes’ rule yields: $arg max_(x) log(p(x | y))$ which is equivalent to $arg min_(x) norm(A x - y)^2 - log(p(x))$
 
 Hence, regularization corresponds to MAP estimation.
-
 
 = X-rays and CT
 
@@ -447,15 +274,11 @@ Two main forms:
 2. *Electromagnetic radiation*  
    Acts as wave or particle (photon).
 
-EM radiation is ionizing if photon energy exceeds the hydrogen binding energy:
-
-[$ E > 13.6 e V $]
+EM radiation is ionizing if photon energy exceeds the hydrogen binding energy: $E > 13.6 e V$
 
 Relations:
-
-[$ E = h nu $]  
-[$ lambda = c / nu $]
-
+$E = h nu $  
+$lambda = c / nu $
 
 == Interaction of Energetic Electrons with Matter
 
@@ -474,7 +297,7 @@ When electrons hit matter:
 *Photoelectric effect*  
 Photon ejects an inner-shell electron:
 
-[$ E_e = h nu - E_B $]
+$E_e = h nu - E_B$
 
 - Filling the vacancy emits characteristic X-rays.
 - Alternatively produces Auger electrons.
@@ -502,18 +325,17 @@ Let:
 
 Photon loss:
 
-[$ d N = -mu(x) N d x $]
+$d N = -mu(x) N d x$
 
 Divide and integrate:
 
-[$ d N / N = -mu(x) d x $]
+$d N / N = -mu(x) d x$
 
-[$ ln(N / N_0) = - integral mu(x) d x $]
+$ln(N / N_0) = - integral mu(x) d x$
 
 Resulting intensity:
 
-[$ N = N_0 exp(- integral mu(x) d x) $]
-
+$N = N_0 exp(- integral mu(x) d x)$
 
 == Narrow Beam vs Broad Beam
 
@@ -540,15 +362,15 @@ Higher $mu$ → stronger attenuation.
 
 Basic imaging equation:
 
-[$ I = integral S(E) exp(- integral mu(x, E) d x) d E $]
+$I = integral S(E) exp(- integral mu(x, E) d x) d E$
 
 Assuming effective monoenergetic spectrum:
 
-[$ I = I_0 exp(- integral mu(x) dx) $]
+$I = I_0 exp(- integral mu(x) d x)$
 
 Taking logarithm:
 
-[$ -ln(I / I_0) = integral mu(x) dx $]
+$-ln(I / I_0) = integral mu(x) d x$
 
 
 == Blurring in Projection Imaging
@@ -563,15 +385,15 @@ Sources of blur:
 
 Photon detection is a counting process:
 
-[$ N ~ Poisson(N) $]
+$N ~  (N)$
 
 Variance:
 
-[$ Var(N) = N $]
+$"Var"(N) = N$
 
 Signal-to-noise ratio:
 
-[$ SNR = N / sqrt(N) = sqrt(N) $]
+$"SNR" = N / sqrt(N) = sqrt(N)$
 
 To increase SNR:
 - Increase photon count
@@ -607,11 +429,11 @@ Basic principle:
 
 Using attenuation model:
 
-[$ I = I_0 exp(- integral mu(x) dx) $]
+$I = I_0 exp(- integral mu(x) d x)$
 
 Define projection value:
 
-[$ p = -ln(I / I_0) = integral mu(x) dx $]
+$p = -ln(I / I_0) = integral mu(x) d x$
 
 Thus each projection is a line integral of $mu$.
 
@@ -620,12 +442,12 @@ Thus each projection is a line integral of $mu$.
 
 Parameterization:
 
-[$ x(s) = s cos(theta) - t sin(theta) $]  
-[$ y(s) = s sin(theta) + t cos(theta) $]
+$x(s) = s cos(theta) - t sin(theta)$  
+$y(s) = s sin(theta) + t cos(theta)$
 
 Projection:
 
-[$ g(t, theta) = integral mu(x(s), y(s)) ds $]
+$g(t, theta) = integral mu(x(s), y(s)) d s$
 
 This is the *Radon transform*.
 
@@ -644,7 +466,7 @@ Idea:
 
 Backprojection operator:
 
-[$ f_BP(x, y) = integral g(x cos(theta) + y sin(theta), theta) d theta $]
+$f_"BP"(x, y) = integral g(x cos(theta) + y sin(theta), theta) d theta$
 
 Produces blurred image.
 
@@ -653,7 +475,7 @@ Produces blurred image.
 
 1D Fourier transform of projection:
 
-[$ G(omega, theta) = F_1[g(t, theta)] $]
+$G(omega, theta) = F_1[g(t, theta)]$
 
 Equals slice of 2D Fourier transform of image:
 
@@ -661,8 +483,8 @@ Equals slice of 2D Fourier transform of image:
 
 with:
 
-[$ u = omega cos(theta) $]  
-[$ v = omega sin(theta) $]
+$u = omega cos(theta)$  
+$ v = omega sin(theta)$
 
 
 == Filtered Backprojection (FBP)
@@ -672,8 +494,7 @@ Steps:
 2. Backproject filtered projections
 
 Reconstruction:
-
-[$ mu(x, y) = integral (g * h)(x cos(theta) + y sin(theta), theta) d theta $]
+$mu(x, y) = integral (g * h)(x cos(theta) + y sin(theta), theta) d theta$
 
 where $h$ is the reconstruction filter.
 
@@ -700,7 +521,7 @@ Results in streaks and cupping artifacts.
 
 To standardize CT values:
 
-[$ HU = 1000 (mu - mu_water) / (mu_water - mu_air) $]
+[$ H U = 1000 (mu - mu_"water") / (mu_"water" - mu_"air") $]
 
 Reference values:
 
