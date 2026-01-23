@@ -1,10 +1,13 @@
-name: Compile Typst document
+name: Build Typst PDF and create Release
 
 on:
   push:
-    branches:
-      - main
-  pull_request:
+    tags:
+      - "v*"
+      - "lecture-*"
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -21,9 +24,8 @@ jobs:
         run: |
           typst compile main.typ main.pdf
 
-      - name: Upload PDF artifact
-        uses: actions/upload-artifact@v4
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
         with:
-          name: lecture-script
-          path: main.pdf
+          files: main.pdf
 
