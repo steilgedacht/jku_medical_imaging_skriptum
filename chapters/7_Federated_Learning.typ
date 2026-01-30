@@ -28,9 +28,9 @@ Breaches of these regulations can lead to identity theft, loss of trust, and sev
 == From Centralized to Federated Learning
 
 
-- **Centralized ML**: Training data from all sources is moved to a central server.
-- **Distributed On-Site Learning**: Models are trained locally at each site with no information exchange.
-- **Federated Learning (FL)**: A collaborative learning approach where data remains at the source, and only model updates (weights) are shared with a central server.
+- Centralized ML: Training data from all sources is moved to a central server.
+- Distributed On-Site Learning: Models are trained locally at each site with no information exchange.
+- Federated Learning (FL): A collaborative learning approach where data remains at the source, and only model updates (weights) are shared with a central server.
 
 
 === Comparison: Centralized vs. Federated Learning
@@ -46,9 +46,11 @@ Breaches of these regulations can lead to identity theft, loss of trust, and sev
 == Centralized FL - Mathematical Formulation
 
 
-Let $K$ be the number of clients, and $P_k$ be the data distributed to client $k$. The goal is to solve:
-$ min_w f(w) = sum_(k=1)^K n_k/n F_k(w) $
-where $n_k$ is the number of samples at client $k$, and $F_k(w)$ is the local loss function.
+Let $D = (x_i, y_i)^n_(i=1)$ be a dataset distributed to $K$ clients $C_k$ where $k in {1, ... , k}$. We denote by $P={1,... n}$ and each client has a subset $P_k$ such that $P= union.big_(k=1)^n P_k$. The goal is to solve:
+$ min_w f(w) = min 1/n sum_(i=1)^N f_i(w) $
+where $f_i(w)= l(x_i, y_i, w)$ is a loss function. Then we have that the total loss function 
+$ f(w) = 1/n sum^n_(i=1) f_i(w) = sum^n_(i=1) 1/n f_i(w) = sum^K_(k=1) 1/n n_f F_k(w) $
+with $F_k(w) = 1/n_k sum_(i in P_k) f_i(w)$ which is the loss at the distributed clients. So the loss function of the sample is the same, but now we combined the indices into the clients and then we write it by $n_k$. It is still the same thing, we just shifted the indices. At the client we do the same thing as globally. 
 
 #remark()[
   *Iterative Learning Concept*:
@@ -59,8 +61,8 @@ where $n_k$ is the number of samples at client $k$, and $F_k(w)$ is the local lo
 ]
 
 === Algorithms: FedSGD and FedAVG
-- **FedSGD**: A simple version where each client performs one step of gradient descent per round.
-- **FedAVG**: Substantially reduces communication by allowing clients to perform multiple local epochs before aggregating.
+- FedSGD: A simple version where each client performs one step of gradient descent per round.
+- FedAVG: Substantially reduces communication by allowing clients to perform multiple local epochs before aggregating.
 
 #theorem(title: "FedAVG Update Rule")[
   The server aggregates weights from a subset of sampled clients $S_t$:
@@ -72,25 +74,25 @@ where $n_k$ is the number of samples at client $k$, and $F_k(w)$ is the local lo
 
 
 In FL, data is typically not independent and identically distributed (Non-IID).
-1. **Feature distribution skew**: Different demographics or devices ($P_k(x)$ varies).
-2. **Label distribution skew**: Different distribution of labels ($P_k(y)$ varies).
-3. **Concept shift**: Same feature, different labels (e.g., inter-reader variability).
+1. Feature distribution skew: Different demographics or devices ($P_k(x)$ varies).
+2. Label distribution skew: Different distribution of labels ($P_k(y)$ varies).
+3. Concept shift: Same feature, different labels (e.g., inter-reader variability).
 
-*Solution*: **SCAFFOLD** uses control variables to correct for "client drift" caused by non-IID data.
+*Solution*: SCAFFOLD uses control variables to correct for "client drift" caused by non-IID data.
 
 == Personalization Techniques
 To improve performance on heterogeneous data, models can be personalized:
-- **Personalization Layers**: Splitting the model into global layers (shared) and local layers (private to each client).
-- **FedBN**: Keeping Batch Normalization parameters local to account for feature shifts.
-- **Hypernetworks**: Using a central network to predict personalized model parameters for each client based on their data distribution.
+- Personalization Layers: Splitting the model into global layers (shared) and local layers (private to each client).
+- FedBN: Keeping Batch Normalization parameters local to account for feature shifts.
+- Hypernetworks: Using a central network to predict personalized model parameters for each client based on their data distribution.
 
 == Privacy and Security in FL
 
 
 Despite data staying local, FL is vulnerable to several attacks:
-1. **Inference Attacks**: Inferring class representatives, membership, or even training samples from gradients (Deep Leakage from Gradients).
-2. **Malicious Server**: A server using a GAN to reconstruct client data.
-3. **Poisoning Attacks**: Backdoor or replacement attacks to manipulate the global model.
+1. Inference Attacks: Inferring class representatives, membership, or even training samples from gradients (Deep Leakage from Gradients).
+2. Malicious Server: A server using a GAN to reconstruct client data.
+3. Poisoning Attacks: Backdoor or replacement attacks to manipulate the global model.
 
 == Federated Learning with Differential Privacy (DP)
 
@@ -103,8 +105,8 @@ Despite data staying local, FL is vulnerable to several attacks:
 #remark()[
   *Handwritten Sensitivity derivation for FedAvg*:
   The sensitivity $S_k$ of the update is given by the maximum change in weights. To ensure DP, updates must be:
-  1. **Clipped**: $bar(w) = w / max(1, norm(w)_2 / C)$.
-  2. **Noised**: Adding Gaussian noise $n tilde N(0, sigma^2 I)$ proportional to the sensitivity.
+  1. Clipped: $bar(w) = w / max(1, norm(w)_2 / C)$.
+  2. Noised: Adding Gaussian noise $n tilde N(0, sigma^2 I)$ proportional to the sensitivity.
 ]
 
 
@@ -112,6 +114,6 @@ Despite data staying local, FL is vulnerable to several attacks:
 - For each round $t$:
   - Sample clients $k$.
   - Clients update local weights $w^k$.
-  - **Clip** local updates.
-  - **Add noise** to the clipped updates.
+  - Clip local updates.
+  - Add noise to the clipped updates.
   - Server aggregates noised weights and broadcasts the new global model.

@@ -11,10 +11,10 @@
 Microscopy reveals structure and function at the cellular and tissue level, which is critical for diagnosis, research, and therapy decisions.
 
 *Key medical applications:*
-- **Histopathology**: For example, cancer diagnosis through tissue examination.
-- **Hematology**: Analysis of blood smears.
-- **Infectious disease identification**: Detecting pathogens.
-- **Cell biology & drug discovery**: Understanding cellular mechanisms.
+- Histopathology: For example, cancer diagnosis through tissue examination.
+- Hematology: Analysis of blood smears.
+- Infectious disease identification: Detecting pathogens.
+- Cell biology & drug discovery: Understanding cellular mechanisms.
 
 #remark()[
   *Handwritten Workflow:*
@@ -25,9 +25,9 @@ Microscopy reveals structure and function at the cellular and tissue level, whic
 
 
 Traditional manual microscopy analysis is:
-- **Time-intensive**: Pathologists must manually scan large slides.
-- **Subjective**: High variability between different practitioners.
-- **Hard to scale**: Difficult to handle large datasets of high-resolution slides.
+- Time-intensive: Pathologists must manually scan large slides.
+- Subjective: High variability between different practitioners.
+- Hard to scale: Difficult to handle large datasets of high-resolution slides.
 
 *Machine Learning (ML) Advantages:*
 - Automates repetitive tasks.
@@ -57,32 +57,32 @@ Traditional manual microscopy analysis is:
 White light passes through the sample, and the image is based on absorption by stains. This is the most used method in standard histology.
 
 #definition(title: "Staining")[
-  Biological tissues are largely transparent. Stains (like **Hematoxylin & Eosin / H&E**) bind selectively to cellular components (e.g., nuclei vs. cytoplasm) to convert biochemical differences into visible intensity differences.
+  Biological tissues are largely transparent. Stains (like Hematoxylin & Eosin / H&E) bind selectively to cellular components (e.g., nuclei vs. cytoplasm) to convert biochemical differences into visible intensity differences.
 ]
 
 
 === Other Modalities
-- **Fluorescence Microscopy**: Uses fluorophores that absorb excitation light and emit light at a longer wavelength.
-- **Confocal Microscopy**: A laser scanning technique using a pinhole to reject out-of-focus light, allowing for 3D "optical sectioning".
-- **Electron Microscopy**: Uses electrons instead of photons for resolution up to 1,000,000x. Includes **TEM** (internal structure) and **SEM** (surface topology).
+- Fluorescence Microscopy: Uses fluorophores that absorb excitation light and emit light at a longer wavelength.
+- Confocal Microscopy A laser scanning technique using a pinhole to reject out-of-focus light, allowing for 3D "optical sectioning".
+- Electron Microscopy: Uses electrons instead of photons for resolution up to 1,000,000x. Includes TEM (internal structure) and SEM (surface topology).
 
 == Key Challenges in Medical Imaging
 
 
-1. **Data**: Expert annotations are expensive and time-consuming (pathologists spend hours per slide).
-2. **Whole Slide Images (WSI)**: Images can be massive (e.g., $100,000 times 100,000$ pixels, ~10GB per image).
-3. **Class Imbalance**: Tasks often involve "rare events" like mitoses.
-4. **Domain Shifts**: Variations in scanner types, staining protocols, and patient populations.
+1. Data: Expert annotations are expensive and time-consuming (pathologists spend hours per slide).
+2. Whole Slide Images (WSI): Images can be massive (e.g., $100,000 times 100,000$ pixels, ~10GB per image).
+3. Class Imbalance: Tasks often involve "rare events" like mitoses.
+4. Domain Shifts: Variations in scanner types, staining protocols, and patient populations.
 
 == Multiple Instance Learning (MIL)
 
 
-Due to the size of WSIs and the lack of pixel-level labels, we often use **Weakly Supervised Learning** through MIL.
+Due to the size of WSIs and the lack of pixel-level labels, we often use Weakly Supervised Learning through MIL.
 
 #definition(title: "Multiple Instance Learning (MIL)")[
-  Instead of individual labeled samples, we have **bags** of instances $X_j = {x_{j 1}, x_{j 2}, dots, x_{j K}\}$.
+  Instead of individual labeled samples, we have bags of instances $X_j = {x_{j 1}, x_{j 2}, dots, x_{j K}\}$.
   - A bag is labeled $Y=0$ if all instances are negative.
-  - A bag is labeled $Y=1$ if **at least one** instance is positive.
+  - A bag is labeled $Y=1$ if at least one instance is positive.
 ]
 
 #theorem(title: "Permutation Invariance")[
@@ -91,8 +91,8 @@ Due to the size of WSIs and the lack of pixel-level labels, we often use **Weakl
 ]
 
 === Deep MIL Approaches
-1. **Instance-level approach**: $f$ is an instance classifier; scores are aggregated.
-2. **Embedding-level approach**: $f$ maps instances to low-dimensional embeddings, which are then pooled to create a bag representation for the classifier $g$.
+1. Instance-level approach: $f$ is an instance classifier; scores are aggregated.
+2. Embedding-level approach: $f$ maps instances to low-dimensional embeddings, which are then pooled to create a bag representation for the classifier $g$.
 
 === Attention-based MIL Pooling
 

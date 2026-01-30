@@ -14,9 +14,9 @@ forward problem: The street becomes wet when it rains.
 backward problem would be: We observe that the street is wet. Why?
 
 There are multiple different causes:
-• Rain
-• Fog
-• Cleaning
+- Rain
+- Fog
+- Cleaning
 
 And this can be already problematic as we have multiple different options for what the cause could be.
 
@@ -35,11 +35,10 @@ So we bascially have $y$ and we want to get to $x$
 === Example: Deconvolution
 
 *Forward Problem*  
-Observe a blurred image $ f = k * u $ on a domain $ Omega subset RR^2 $.
+Observe a blurred image $ f = k * u $ on a domain $Omega subset RR^2$.
 
 *Inverse Problem*  
-Estimate the sharp image $ u: Omega -> RR $ given the blur kernel $ k: Omega times Omega -> RR_+ $ 
-
+Estimate the sharp image $u: Omega -> RR$ given the blur kernel $k: Omega times Omega -> RR_+$ 
 On of the oldest clasical methods to do that is the Wiener Filter.
 Deconvolution is linked to Fourier $F$:
 
@@ -51,9 +50,7 @@ If we wanna do the inverse:
 
 $ F^(-1) {F(f)} = F^(-1){F(k) dot.o F(u)} = f $  
 
-where $dot.o$ is a pointwise multiplication
-
-So a estimate $accent(u, hat)$ would be 
+where $dot.o$ is a pointwise multiplication. So a estimate $accent(u, hat)$ would be 
 
 $ accent(u, hat) = F^(-1) (F(f)/F(k)) $
 
@@ -292,7 +289,7 @@ $ hat(x) = arg min E(x) := 1/2 sum_(i=1)^m (a_i^T x - y_i)^2 = 1/2 ||A x - y||_2
 
 How do we solve this optimization problem?
 
-$ nabla E(x) = 0 = frac(diff e, diff x) frac(diff E, diff e) = frac(diff e, diff x) 1/2 2 e = A^T e = A^T (A x - y) = 0 $
+$ nabla E(x) = 0 = frac(partial e, partial x) frac(partial E, partial e) = frac(partial e, partial x) 1/2 2 e = A^T e = A^T (A x - y) = 0 $
 
 #underline[$ nabla E(x) in RR^n $]
 
@@ -333,21 +330,21 @@ $ min_x 1/2 ||x||_2^2 quad "s.t." quad A x = y $
 === Recap: Lagrange Multipliers 
 To solve $min E(x)$ subject to $C(x) = 0$
 
-Define Lagrangian: $cal(L)(x, tau) = E(x) + angle.l C(x), tau angle.r$ 
+Define Lagrangian: $cal(L)(x, tau) = E(x) + chevron.l C(x), tau chevron.r$ 
 
 Find solution by $nabla cal(L)(x, tau) = 0$
 
-$ cases(diff / (diff x) cal(L) = (diff E) / (diff x) + (diff C) / (diff x) tau = 0, diff / (diff tau) cal(L) = C(x) = 0) $ 
+$ cases(partial / (partial x) cal(L) = (partial E) / (partial x) + (partial C) / (partial x) tau = 0, partial / (partial tau) cal(L) = C(x) = 0) $ 
 
 
 === Minimum Length Solution 
 
 Find $x "s.t." A x=y$ and $norm(x)_2^2 arrow.r min$
 
-$ E(x) = 1/2 ||x||_2^2 quad C(x) = y - A x = 0 <=> h(x, tau) = 1/2 norm(x)^2_2 + angle.l y-A x, tau angle.r $ 
+$ E(x) = 1/2 ||x||_2^2 quad C(x) = y - A x = 0 <=> h(x, tau) = 1/2 norm(x)^2_2 + chevron.l y-A x, tau chevron.r $ 
 
-$ diff / (diff x) cal(L) = x - A^T tau = 0 <=> x = A^T tau $ 
-$ diff / (diff tau) cal(L) = y - A x = 0 <=> y = A x= A(A^T tau) = (A A^T) tau <=> tau = (A A^T)^(-1) y $ 
+$ partial / (partial x) cal(L) = x - A^T tau = 0 <=> x = A^T tau $ 
+$ partial / (partial tau) cal(L) = y - A x = 0 <=> y = A x= A(A^T tau) = (A A^T) tau <=> tau = (A A^T)^(-1) y $ 
 
 $ x = A^T (A A^T)^(-1) y $ 
 
@@ -402,7 +399,7 @@ The matrix $A$ has dimensions $[m times n]$.
 
 *How to choose $n$?*
 - Manually
-- Very large + **regularization**
+- Very large + regularization
 
 
 === Incorporating Prior Knowledge
@@ -410,7 +407,7 @@ The matrix $A$ has dimensions $[m times n]$.
 *Least squares problem + regularization:*
 $ hat(x) = arg min_x 1/2 ||A x - y||_2^2 + R(x) $
 
-*Example:* $R(x) = lambda/2 ||x||_2^2$ (**Tikhonov regularization**, aka weight decay)
+*Example:* $R(x) = lambda/2 ||x||_2^2$ (Tikhonov regularization, aka weight decay)
 
 *Derivation:*
 $ 1/2 ||A x - y||^2 + lambda/2 ||x||_2^2 arrow.r min $
@@ -457,7 +454,7 @@ $ x - y + partial g(y) "contents" 0 $
 - *Case $y < 0$:* $-x + y - 1 = 0 arrow.double y = x + 1 < 0 arrow.double x < -1$
 - *Case $y = 0$:* $-x + 0 + [-1, 1] "contents" 0 arrow.double x in [-1, 1]$
 
-Thus, the **Soft Thresholding** operator is:
+Thus, the Soft Thresholding operator is:
 $ "prox"_(|dot|) (x) = cases(x - 1 &"if" x > 1, x + 1 &"if" x < -1, 0 &"else") $
 
 
@@ -469,7 +466,7 @@ $ y ~ cal(N)(A x, Sigma) <==> p(y|x) = |2 pi Sigma|^(-1/2) exp(-1/2 ||A x - y||_
 Moreover, we assume the solution (or its gradients) follows a Gaussian prior:
 $ nabla x ~ cal(N)(0, eta "Id") <==> p(x) = |2 pi eta I|^(-1/2) exp(-1/2 eta ||x||^2) $
 
-Using **Bayes' Rule** to find the posterior distribution:
+Using Bayes' Rule to find the posterior distribution:
 $ p(x|y) = (p(y|x) dot p(x)) / p(y) $
 
 Taking the logarithm:
@@ -480,4 +477,4 @@ Since $Z_1, Z_2,$ and $p(y)$ are constants that do not depend on $x$:
 $ max_x log p(x|y) = max_x -1/2 ||A x - y||_Sigma^-1^2 - 1/(2 eta) ||x||^2 $
 $ min_x -log p(x|y) = min_x underbrace(1/2 ||A x - y||_(Sigma^-1)^2, D(x,y) " (Data Fidelity)") + underbrace(1/(2 eta) ||x||^2, R(x) " (Regularizer)") $
 
-*Conclusion:* The variational formulation of inverse problems corresponds to the **Maximum A Posteriori (MAP) estimation**.
+*Conclusion:* The variational formulation of inverse problems corresponds to the Maximum A Posteriori (MAP) estimation.

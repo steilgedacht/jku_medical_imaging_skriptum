@@ -13,14 +13,17 @@ This immediate application to imagine the human body marks the birth of medical 
 
 X-rays are electromagnetic waves.
 They are a form of ionizing radiation—radiation with enough energy to eject electrons from an atom.
-Typical energies for medical CT range from $10$ keV to $100$ keV.
+
+What needs to hold: Bound energy < Unbound energy + Electron Energy. 
+
+The binding energy is 13.6 eV which is the binding energy of hydrogen.
+For a Medical CT you need around 100keV, for Mammography you need around 20keV. 
 
 === Forms of Ionizing Radiation
 1. *Particulate Radiation*: Any subatomic particle (proton, neutron, electron) with enough kinetic energy to be ionizing.
 2. *Electromagnetic Radiation*: Can act as a wave or a particle (photon). If energy $> 13.6$ eV (binding energy of hydrogen electron), it is considered ionizing.
 
 #remark()[
-  *Handwritten notes on EM relations:*
   $ E = h nu $ and $ lambda = c / nu $
   Where:
   - $h$: Planck's constant
@@ -30,10 +33,10 @@ Typical energies for medical CT range from $10$ keV to $100$ keV.
 ]
 
 == Interaction of Energetic Electrons with Matter
-- *Collision transfer* (~99% $arrow$ heat): Collision with other electrons until kinetic energy is exhausted.
+- *Collision transfer* (~99% $arrow$ heat): Collision with other electrons until kinetic energy is exhausted. If they bump into each other, then energy can be transfered to the other electorn which then will emit infrared photons, which is heat.
 - *Radiative transfer* (~1% $arrow$ X-ray):
   - Eject inner shell electron, generating *characteristic X-ray radiation*.
-  - Electron braked by atom nucleus, generating *Bremsstrahlung X-ray*.
+  - Electron flies close to the atom nucleus and is braked by nucleus, generating *Bremsstrahlung X-ray*.
 
 == Interaction of Electromagnetic Radiation with Matter
 - *Photoelectrical Effect*: Photon ejects an inner shell electron. The energy is $h nu - E_B$. Filling the hole yields characteristic X-rays or Auger electrons.
