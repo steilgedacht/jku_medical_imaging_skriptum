@@ -27,7 +27,6 @@ $ arrow(L) = arrow(r) times (m arrow(v)) $
 | $23 "Na"$ | 11.26 |
 | $31 P$ | 17.24 |
 
-
 == Interaction with external Magnetic Field $B_0$
 
 
