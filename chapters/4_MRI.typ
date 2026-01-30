@@ -6,7 +6,6 @@
 
 == From Spin to Magnetic Resonance Imaging
 
-
 The study of MRI often begins from a classical physics viewpoint, where we accept the existence of nuclear spin without diving into the full quantum mechanics motivation. 
 Reference: Prince, J. L., & Links, J. M. (2014). *Medical imaging signals and systems*. Pearson.
 
