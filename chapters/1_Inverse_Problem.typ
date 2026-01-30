@@ -533,3 +533,4 @@ $ max_x log p(x|y) = max_x -1/2 ||A x - y||_(Sigma^-1)^2 - 1/(2 eta) ||x||^2 $
 $ min_x -log p(x|y) = min_x underbrace(1/2 ||A x - y||_(Sigma^-1)^2, D(x,y) " (Data Fidelity)" \ alpha prop log(p(y|x))) + underbrace(1/(2 eta) ||x||^2, R(x) " (Regularizer)"\ alpha prop log(p(x))) $
 
 Conclusion: The variational formulation of inverse problems corresponds to the Maximum A Posteriori (MAP) estimation.
+
