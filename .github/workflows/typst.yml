@@ -13,43 +13,25 @@ permissions:
 
 jobs:
   build:
+    # Only run the job if "nocomp" is NOT in the commit message
+    if: "!contains(github.event.head_commit.message, 'nocomp')"
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Extract commit message
-        id: extract_commit_message
-        run: echo "::set-output name=commit_message::$(git log --oneline -n 1 HEAD | cut -d ' ' -f 2-)"
-
-      - name: Check if commit message starts with "nocomp"
-        id: check_commit_message
-        run: |
-          commit_message="${{ steps.extract_commit_message.outputs.commit_message }}"
-          if [[ "$commit_message" == nocomp* ]]; then
-            echo "::set-output name=should_build::false"
-          else
-            echo "::set-output name=should_build::true"
-          fi
 
       - name: Install Typst
-        if: ${{ steps.check_commit_message.outputs.should_build }}
         uses: typst-community/setup-typst@v3
 
       - name: Compile Typst
-        if: ${{ steps.check_commit_message.outputs.should_build }}
-        run: |
-          typst compile main.typ main.pdf
+        run: typst compile main.typ main.pdf
 
       - name: Commit updated PDF
-        if: ${{ steps.check_commit_message.outputs.should_build }}
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add main.pdf
-          git commit -m "Auto-build main.pdf" || echo "No changes to commit"
+          # The [skip ci] tag prevents an infinite loop if your commit triggers another build
+          git commit -m "Auto-build main.pdf [skip ci]" || echo "No changes to commit"
           git push
-
