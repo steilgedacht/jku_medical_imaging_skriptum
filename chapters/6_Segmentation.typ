@@ -38,23 +38,19 @@ It is important to distinguish segmentation from other computer vision tasks:
 
 
 #definition(title: "Segmentation as a Labeling Function")[
-  Let $Omega subset RR^d$ be the image domain ($d=2, 3$). An image $x$ is a function $x: Omega arrow.r cal(C)$ (color space).
-  
-  The segmentation problem is defined as finding a mapping:
+
+  Let $Omega subset RR^d$ be the image domain ($d in {2, 3, ... }$). An image $x$ is a function $x: Omega arrow.r RR^C$ (color space). The segmentation problem is defined as finding a mapping:
   $ S: Omega arrow.r cal(L) $
-  Where $cal(L) = \{0, 1, dots, K\}$ is the set of labels ($0$ is usually the background).
+  that assigns to every location a label and where $cal(L) = \{0, 1, dots, K\}$ is the set of labels ($0$ is usually the background).
 ]
 
-#remark()[
-  *Handwritten Note on Partitioning:*
-  The labeling induces a partitioning of the domain into $Omega_k = \{i in Omega mid S(i) = k\}$.
+  The labeling induces a partitioning of the domain into $Omega_k = \{i in Omega | S(i) = k\}$.
   These partitions must be:
-  - Non-overlapping: $Omega_k inter Omega_l = emptyset$ for $k eq.not l$.
-  - Complete: $union.big_{l in cal(L)} Omega_l = Omega$.
-]
+  - Non-overlapping: $Omega_k inter Omega_l = emptyset$ for $k,l in cal(L) and k eq.not l$.
+  - Complete: $union.big_(l in cal(L)) Omega_l = Omega$.
+That basically translates to "I assign every pixel a label and only one".
 
 == Types of Segmentation
-
 
 - Binary: Separating a single foreground structure from the background ($K=1$).
 - Multi-class: Segmenting multiple anatomical structures ($K > 1$).
@@ -76,9 +72,6 @@ It is important to distinguish segmentation from other computer vision tasks:
    - Minimizes an energy function $E(x)$ consisting of unary (likelihood) and pairwise (smoothness) costs.
    - Solved using min-cut/max-flow algorithms.
 
-#remark()[
-  *Handwritten relation*: The pairwise term in Graph Cuts is related to anisotropic Total Variation (TV).
-]
 
 == Deep Learning for Segmentation
 
