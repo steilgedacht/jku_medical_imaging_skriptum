@@ -7,47 +7,53 @@
 == From Spin to Magnetic Resonance Imaging
 
 The study of MRI often begins from a classical physics viewpoint, where we accept the existence of nuclear spin without diving into the full quantum mechanics motivation. 
-Reference: Prince, J. L., & Links, J. M. (2014). *Medical imaging signals and systems*. Pearson.
 
 == Nuclear Spin, Magnetic Dipole Moment, and Torque
 
+#figure(
+  image("../assets/spin.png", height: 110pt),
+)
 
 A rotating object with mass $m$ leads to angular momentum:
-$ arrow(L) = arrow(r) times (m arrow(v)) $
+$ arrow(L) = arrow(r) times (m arrow(v))$.
+The spin of a proton  leads to magnetic angular momentum $arrow(I)$. It is modeled as a magnetic dipole with a moment $arrow(mu) = gamma arrow(I)$, where $gamma$ is the gyromagnetic ratio.
 
-#remark()[
-  *Handwritten Note*: The spin of a proton ($1 H$) leads to magnetic angular momentum $arrow(I)$. It is modeled as a magnetic dipole with a moment $arrow(mu) = gamma arrow(I)$, where $gamma$ is the gyromagnetic ratio.
-]
-
-=== Gyromagnetic Ratios
-| Element | Gyromagnetic ratio $gamma/ (2 pi)$ (MHz/T) |
-| :--- | :--- |
-| $1 H$ | 42.58 |
-| $3 "He"$ | 32.43 |
-| $23 "Na"$ | 11.26 |
-| $31 P$ | 17.24 |
-
-== Interaction with external Magnetic Field $B_0$
-
+Gyromagnetic Ratios
+#table(
+  columns: (auto, auto),
+  inset: 10pt,
+  align: (left, left),
+  [*Element*], [*Gyromagnetic ratio $gamma$ (MHz/T)*],
+  [$""^1 H$], [42.58],
+  [$""^3 "He"$], [32.43],
+  [$""^23 "Na"$], [11.26],
+  [$""^31 P$], [17.24],
+)
 
 Exposure to an external magnetic field $arrow(B)_0$ leads to a torque $arrow(tau)$ that attempts to align the magnetic moment $arrow(mu)$:
 $ arrow(tau) = arrow(mu) times arrow(B)_0 $
 
-- Thermal Motion: In the absence of a field, random orientation means no net magnetization (humans are not inherently magnetic).
-- Magnetization: In the presence of $B_0$, thermal motion is still present, but the magnetic moments align enough to create a small bulk magnetization $arrow(M) = sum_i arrow(mu)_i$.
 
-=== The Two Effects of $B_0$
-1. Magnetization: The magnitude $M$ is given by:
-   $ M = (rho gamma^2 planck B_0) / (4 k T) $
-2. Precession: The magnetic momentum precesses around the external field, similar to a top in a gravitational field. 
+Thermal Motion: In the absence of a field, random orientation means no magnetization (humans are not inherently magnetic).
+ In the presence of a field $B_0$, thermal motion is still present, but the magnetic moments align enough to create a small bulk magnetization $arrow(M) = sum_i arrow(mu)_i$ with magnitude   $ M = (rho gamma^2 planck B_0) / (4 k T) $
+This alignment is the first effect we will later use for MRI.
 
+#figure(
+  image("../assets/MRI_B0.png", height: 110pt),
+)
+
+Another phenonom is precession: The magnetic momentum precesses around the external field
+
+#figure(
+  image("../assets/precession.png", height: 110pt),
+)
 #definition(title: "Larmor Frequency")[
   The frequency of precession is the Larmor frequency:
   $ omega_0 = gamma B_0 $
-  For a proton ($1 H$), $gamma / (2 pi) approx 42.6$ MHz/T. This is a key equation for MR imaging.
+  For a proton ($""^1 H$), $gamma / (2 pi) approx 42.6$ MHz/T. This is a key equation for MR imaging.
 ]
 
-== Interaction with Radiofrequency field $B_1$
+=== Interaction with Radiofrequency field $B_1$
 
 
 When an RF field $B_1$ is applied at the Larmor frequency, it tips the magnetization away from the longitudinal axis.

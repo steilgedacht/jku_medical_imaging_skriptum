@@ -164,10 +164,10 @@ $ y = "prox"_(1/L h) (x - 1/L nabla g(x)) $
 ]
 
 == Key Learning Principles:
-1. Bilevel Optimization: Learning parameters by solving an optimization problem within another.
-2. Contrastive Learning: Learning representations by comparing positive and negative pairs.
-3. Distribution Matching: Ensuring the reconstructed distribution matches the ground truth distribution.
-4. Plug & Play (PnP): Using a pre-trained deep denoiser as a proximal operator in iterative algorithms.
+1. Bilevel Optimization: Learning parameters by solving an optimization problem within another. (= supervised learning)
+2. Contrastive Learning: Learning representations by comparing positive and negative pairs. (= semi-supervised)
+3. Distribution Matching: Ensuring the reconstructed distribution matches the ground truth distribution. (= unsupervised)
+4. Plug & Play (PnP): Using a pre-trained deep denoiser as a proximal operator in iterative algorithms. (= unsupervised)
 
 == Bilevel Optimization
 
