@@ -4,6 +4,8 @@ This is a Skriptum for the Medical Imaging Lecutre on JKU in 2026. It shows all 
 
 ## How to contribute
 
+Write me on Discord (steilgedacht#2730) your Github Account so that I can add you as a collaborator.
+
 Simple option: Just edit the text in the files in the chapters folder. As soon as you push to the repository, a Github action automatically recompiles and pushes the Skriptum, so no need for a dedicated setup!
 
 Dedicated Setup: 

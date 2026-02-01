@@ -25,7 +25,7 @@
 #show par: set par(first-line-indent: 0pt)
 
 #show: classicthesis.with(
-  title: "Medical Imaging",
+  title: "Medical Imaging Skriptum",
   subtitle: "Lecture Skriptum",
   author: "Benjamin Bergmann",
   date: "2026",
