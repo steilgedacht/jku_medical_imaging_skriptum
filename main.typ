@@ -18,7 +18,6 @@
   }
 )
 
-// 3. To make the text in the header white automatically
 #show table: it => {
   show table.cell.where(y: 0): set text(fill: white, weight: "bold")
   it
