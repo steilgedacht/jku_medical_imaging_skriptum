@@ -7,10 +7,10 @@
   fill: (column, row) => {
     if row == 0 {
       // Header row color (matching your dark red theme)
-      red.darken(20%)
+      green.darken(20%)
     } else if calc.even(row) {
       // Alternating row color (very light gray or light red)
-      red.lighten(95%)
+      green.lighten(95%)
     } else {
       // Odd rows stay white
       white
