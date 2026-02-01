@@ -85,9 +85,9 @@ Client
 
 Let $D = (x_i, y_i)^n_(i=1)$ be a dataset distributed to $K$ clients $C_k$ where $k in {1, ... , k}$. We denote by $P={1,... n}$ and each client has a subset $P_k$ such that $P= union.big_(k=1)^n P_k$. The goal is to solve:
 $ min_w f(w) = min 1/n sum_(i=1)^N f_i (w) $
-where $f_i(w)= l(x_i, y_i, w)$ is a loss function. Then we have that the total loss function 
+where $f_i (w)= l(x_i, y_i, w)$ is a loss function. Then we have that the total loss function 
 $ f(w) = 1/n sum^n_(i=1) f_i (w) = sum^n_(i=1) 1/n f_i (w) = sum^K_(k=1) 1/n n_f F_k (w) $
-with $F_k (w) = 1/n_k sum_(i in P_k) f_i(w)$ which is the loss at the distributed clients. So the loss function of the sample is the same, but now we combined the indices into the clients and then we write it by $n_k$. It is still the same thing, we just shifted the indices. At the client we do the same thing as globally. 
+with $F_k (w) = 1/n_k sum_(i in P_k) f_i (w)$ which is the loss at the distributed clients. So the loss function of the sample is the same, but now we combined the indices into the clients and then we write it by $n_k$. It is still the same thing, we just shifted the indices. At the client we do the same thing as globally. 
 
 
 === Algorithms: FedSGD and FedAVG

@@ -207,7 +207,6 @@ Segment Anything Model (SAM): A promptable foundation model for segmentation, re
 == Segmentation Loss Odyssey
 
 
-A combination of different loss terms is often used in practice.
 
 === Distribution-based: 
   - *Weighted Cross Entropy*: Penalizes errors in rare classes more heavily.

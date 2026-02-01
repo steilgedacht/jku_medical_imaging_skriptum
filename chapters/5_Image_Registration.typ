@@ -30,9 +30,9 @@ Registration is typically formulated as an optimization problem where we seek th
 
 #definition(title: "Variational Formulation")[
   $ min_theta S(f, m circle.small T_theta) + R(T_theta) $
-  Where:
+  where
   - $S(f, m circle.small T_theta)$ is the Similarity Metric (measures how well the images match).
-  - $R(T_theta)$ is the Regularization term (ensures the transformation is physically plausible or smooth).
+  - $R(T_theta)$ is the Regularization term (ensures the transformation is physically plausible or smooth and not completely overfits local noise).
 ]
 After we applyed the transform to the moved image, we need to wrap the image on the underying pixelgrid. There are different inerpolation stradegies for that:
 #figure(
