@@ -75,14 +75,14 @@ The most popular algorytm for learned inversion is AUTOMAP. You put in the fouri
 
 == Learned Model-based Reconstruction
 
-===  Recall: Lipschitz Continuous nablaients
+===  Recall: Lipschitz Continuous Gradients
 Let $f: RR^N -> RR$ be differentiable and $0 < L < infinity$ such that:
 $ ||nabla f(x) - nabla f(y)|| <= L ||x - y|| quad forall x, y in RR^N $
 
 Then, we have the quadratic upper bound:
 $ f(y) <= f(x) + chevron.l nabla f(x), y - x chevron.r + L/2 ||x - y||^2 quad forall x, y in RR^N $
 
-===  Proximal nablaient Method (PGM)
+===  Proximal Gradient Method (PGM)
 To optimize a function $f: RR^N -> RR$ decomposable into $f(x) = g(x) + h(x)$, where $g(x) in C^(1,k)(RR^N)$ and $h$ is closed (l.s.c), convex, and proper (proximal mapping can be computed).
 
 Iteration Rule:
@@ -101,7 +101,7 @@ $ g(y) <= g(x) + chevron.l nabla g(x), y - x chevron.r + L/2 ||y - x||^2 $
 This is $g(x)$, but we want also to have a $h(x)$ to have the same form as in the definition above. So we add $h(y)$ to both sides:
 $ f(y) = g(y) + h(y) <= g(x) + h(y) + chevron.l nabla g(x), y - x chevron.r + L/2 ||y - x||^2 =: tilde(f)(y) $
 We want to have a upper bound to our function and we want to optimize $f$. 
-To minimize the upper bound $tilde(f)(y)$, we take the subnablaient with respect to $y$:
+To minimize the upper bound $tilde(f)(y)$, we take the subgradient with respect to $y$:
 
 $ partial / (partial y) tilde(f)(y) = partial / (partial y) h(y) + nabla g(x) + L(y - x) $
 And then we can set it to $0$
@@ -116,9 +116,9 @@ $ y = "prox"_(1/L h) (x - 1/L nabla g(x)) $
 
 #example(title:"Lasso")[
   $ min_x 1/2 ||A x - y||^2_2 + lambda ||x||_1 $
-  Where $g(x) = 1/2 ||A x - y||^2_2$ and $h(x) = lambda ||x||_1$. Site note: The derivate of $lambda ||x||_1$ is not Lipschitz continuous 
+  Where $g(x) = 1/2 ||A x - y||^2_2$ and $h(x) = lambda ||x||_1$. Site note: The derivative of $lambda ||x||_1$ is not Lipschitz continuous 
 
-  nablaient: $ nabla g(x) = A^T (A x - y) $
+  gradient: $ nabla g(x) = A^T (A x - y) $
   Proximal Operator (Soft Thresholding):
   $ "prox"_(1/L h)(y)_i = max(|y_i| - lambda/L, 0) dot "sign"(y_i) $
 
@@ -189,17 +189,17 @@ Let's do it step by step:
 3. The first order optimality condition of $E_theta$ is:
    $ frac(partial, partial theta) (nabla_x E(hat(x)(theta), theta)) = frac(partial, partial theta) (0) = 0 $
    $ frac(partial hat(x)(theta), partial theta) nabla_x^2 E(hat(x)(theta), theta) + frac(partial, partial theta) nabla_x E(hat(x)(theta), theta) = 0 $
-   $ frac(partial hat(x)(theta), partial theta) = - underbrace( frac(partial, partial theta) nabla_x E(hat(x)(theta), theta), "Jacobian o the" \ "lower level energy nablaient" ) underbrace(( nabla_x^2 E(hat(x)(theta), theta) )^(-1), "inverse Hessian of" \ "lower level energy") $
+   $ frac(partial hat(x)(theta), partial theta) = - underbrace( frac(partial, partial theta) nabla_x E(hat(x)(theta), theta), "Jacobian o the" \ "lower level energy gradient" ) underbrace(( nabla_x^2 E(hat(x)(theta), theta) )^(-1), "inverse Hessian of" \ "lower level energy") $
 
 
 === Unrolling (truncated optimization):
 
 Using the IFT requires that we have $nabla E(hat(x)) approx 0$. So, we need to approximate this using an optimization algorithm (e.g., PGD)
 $ x_(k+1) = T(x_k; theta) quad "for" k = 0 dots K-1 $
-E.g., if $T$ implements nablaient descent, we have $T: x arrow x - 1/2 nabla E_theta (x)$.
+E.g., if $T$ implements gradient descent, we have $T: x arrow x - 1/2 nabla E_theta (x)$.
 If we use $K$-steps, we get a computational chain:
 $ x_0(y) arrow^(T_theta) x_1(theta) arrow^(T_theta) x_2(theta) dots arrow^(T_theta) x_K (theta) $
-In unrolling, we simply set $hat(x) = x_K (theta)$; $L(theta) = sum_(i=1)^n ||x_K^(i)(theta) - x_i||_2^2$. The nablaient $frac(partial L(theta), partial x_K)$ can simply be computed by back-propagation. The advantage is that it is easy implementable, but you have large memory consumtion
+In unrolling, we simply set $hat(x) = x_K (theta)$; $L(theta) = sum_(i=1)^n ||x_K^(i)(theta) - x_i||_2^2$. The gradient $frac(partial L(theta), partial x_K)$ can simply be computed by back-propagation. The advantage is that it is easy implementable, but you have large memory consumtion
 
 
 === Jacobian-free backpropagation (truncated backpropagation)
@@ -217,11 +217,11 @@ Let $\{x_i\}_(i=1)^n tilde p_X$ be samples from desired images (= no measurement
 
 The key idea of AR is to train a model to be a discriminator (c.f. GAN), i.e.,
 
-$ L(theta) = 1/n sum_(i=1)^n R_theta (x_i) - 1/m sum_(j=1)^m R_theta (A^dagger y_j) + underbrace(lambda E_x [ (||nabla_x R_theta (x)|| - 1)_+^2 ], "nablaient penalty in Wasserstein GANs") $
+$ L(theta) = 1/n sum_(i=1)^n R_theta (x_i) - 1/m sum_(j=1)^m R_theta (A^dagger y_j) + underbrace(lambda E_x [ (||nabla_x R_theta (x)|| - 1)_+^2 ], "gradient penalty in Wasserstein GANs") $
 
 where $R_theta: RR^N -> RR_+$ and $y_j = A x_j + n$ with $n tilde cal(N)(0, sigma^2 "I")$.
 
-nablaient penalty in Wasserstein GANs: penalizes deviations from the 1-Lipschitz assumption in WGANs. The Lipschitz constant gives us the maximal graident of a function.
+Gradient penalty in Wasserstein GANs: penalizes deviations from the 1-Lipschitz assumption in WGANs. The Lipschitz constant gives us the maximal gradient of a function.
 An advantage is that it is an easy training problem (at least to code). A disadvantage is that the training could be unstable and the balancing regularization & data fidelity is hard during inference.
 
 == Distribution Matching
