@@ -16,10 +16,9 @@ Microscopy reveals structure and function at the cellular and tissue level, whic
 - Infectious disease identification: Detecting pathogens.
 - Cell biology & drug discovery: Understanding cellular mechanisms.
 
-#remark()[
-  *Handwritten Workflow:*
-  1. Endoscopic Biopsy $arrow$ 2. Gross Examination $arrow$ 3. Tissue Fixation/Embedding $arrow$ 4. Microtomy/Staining $arrow$ 5. Microscopic Evaluation.
-]
+#figure(
+  image("../assets/microscopy.png", height: 260pt),
+ )
 
 == Why Machine Learning?
 
@@ -36,43 +35,171 @@ Traditional manual microscopy analysis is:
 
 
 == Microscopy Modalities Overview
+#block()[
+  #set text(size: 6pt)
+  #table(
+    columns: (auto, 1.5fr, 1.2fr, 1.3fr, 1.2fr, 1.2fr, 1fr),
+    inset: 7pt,
+    align: horizon,
+    stroke: 0.5pt + gray,
+    
+    [*Modality*], [*Contrast Mechanism*], [*Typical Data Type*], [*Main Applications*], [*Advantages*], [*Limitations*], [*Typical Spatial Resolution*],
+    
+    [*Brightfield Microscopy*], 
+    [Absorption of light by stains (e.g., H&E, IHC)], 
+    [2D images, Whole Slide Images (WSI)], 
+    [Histopathology, cancer diagnosis, tissue morphology], 
+    [Cheap, standardized, clinically established], 
+    [Requires staining, limited molecular specificity], 
+    [~0.2–0.5 μm (light diffraction limit)],
 
+    [*Phase Contrast Microscopy*], 
+    [Optical phase shifts from refractive index differences], 
+    [2D time-lapse images], 
+    [Live cell imaging, cell motility, cell division], 
+    [No staining, suitable for living cells], 
+    [Limited molecular specificity], 
+    [~0.2–0.5 μm],
 
-#figure(
-  table(
-    columns: (auto, auto, auto, auto),
-    table.header([*Modality*], [*Contrast Mechanism*], [*Advantages*], [*Limitations*]),
-    [Brightfield], [Absorption by stains (H&E)], [Cheap, clinical standard], [Requires staining],
-    [Phase Contrast], [Phase shifts (refractive index)], [Live cell imaging (no stain)], [Low molecular specificity],
-    [Fluorescence], [Fluorophore emission], [High specificity, multi-channel], [Photobleaching, blur],
-    [Confocal], [Pinhole rejection], [3D optical sectioning], [Slower, phototoxicity],
-    [Electron (TEM)], [Electron scattering], [Extremely high res (< 1 nm)], [Expensive, destructive],
-  ),
-  caption: [Comparison of common microscopy modalities.],
-)
+    [*Fluorescence Microscopy (Widefield)*], 
+    [Fluorophore excitation/emission], 
+    [2D multi-channel images], 
+    [Protein localization, biomarker detection], 
+    [Molecular specificity, multichannel], 
+    [Out-of-focus blur, photobleaching], 
+    [~0.2–0.3 μm (lateral), ~0.5–0.7 μm (axial)],
 
+    [*Confocal Microscopy*], 
+    [Optical sectioning via pinhole rejection], 
+    [2D slices, 3D stacks], 
+    [3D tissue/cell imaging, morphology], 
+    [High contrast, true 3D imaging], 
+    [Slower, phototoxicity], 
+    [~0.18–0.25 μm (lateral), ~0.5 μm (axial)],
+
+    [*Electron Microscopy (TEM)*], 
+    [Electron transmission and scattering], 
+    [2D grayscale images], 
+    [Subcellular ultrastructure, organelles], 
+    [Extremely high resolution], 
+    [Expensive, destructive, grayscale], 
+    [ < 1 nm (≈0.1–0.5 nm)],
+
+    [*Electron Microscopy (SEM)*], 
+    [Electron surface scattering], 
+    [2D surface topology], 
+    [Cell surfaces, materials, morphology], 
+    [3D-like surface detail], 
+    [Limited internal structure], 
+    [1–10 nm],
+  )
+]
 
 === Brightfield Microscopy
 
 White light passes through the sample, and the image is based on absorption by stains. This is the most used method in standard histology.
+#figure(
+  image("../assets/brightfield_microscopy.png", height: 260pt),
+ )
 
 #definition(title: "Staining")[
   Biological tissues are largely transparent. Stains (like Hematoxylin & Eosin / H&E) bind selectively to cellular components (e.g., nuclei vs. cytoplasm) to convert biochemical differences into visible intensity differences.
 ]
+#figure(
+  image("../assets/staining.png", height: 200pt),
+ )
+
+=== Fluorescence microscopy
+Uses fluorophores that absorb excitation light and emit light at a longer wavelength. We can prepare the sample with dye by fluroscent stain or use fluorescent proteins. With that we can get multiple images with different channels that all come from different stains. With that we can get highly specific imaging.
+
+#figure(
+  image("../assets/fluroscene.png", height: 200pt),
+ )
+#figure(
+  image("../assets/fluroscene2.png", height: 100pt),
+ )
+
+=== Phase Contrast
+Here we use the refrection index of the materials which accounts for different phase shifts 
+#figure(
+  image("../assets/phase_contrast.png", height: 150pt),
+ )
+
+ #figure(
+   image("../assets/phase_contrast2.png", height: 150pt),
+ )
+
+With this you can also investigate still living entities.
+
+=== Confocal Microscopy
+
+A technique using a pinhole to reject out-of-focus light, allowing for 3D "optical sectioning". Only the things that are on the same height appear in-focus. 
+
+ #figure(
+   image("../assets/confocal.png", height: 150pt),
+ )
+ #figure(
+   image("../assets/confocal2.png", height: 150pt),
+ )
 
 
-=== Other Modalities
-- Fluorescence Microscopy: Uses fluorophores that absorb excitation light and emit light at a longer wavelength.
-- Confocal Microscopy A laser scanning technique using a pinhole to reject out-of-focus light, allowing for 3D "optical sectioning".
-- Electron Microscopy: Uses electrons instead of photons for resolution up to 1,000,000x. Includes TEM (internal structure) and SEM (surface topology).
+=== Electron microscopy
+
+Uses electrons instead of photons for resolution up to 1,000,000x (optical microscopy up to 1,500x). It acchievs that by using electromagnetic lenses instead of glass. The sample preparation requires lot of work, no live imaging possible. The sample must be within vacuum. There are two types:
+- Transmission EM: internal ultrastructure
+- Sampling EM: surface morphology and topology
+
+#figure(
+  image("../assets/electron_microscopy.png", height: 190pt),
+)
+
+#figure(
+  image("../assets/tem_vs_sem.png", height: 190pt),
+)
 
 == Key Challenges in Medical Imaging
 
++ Limited labeled data
+  Expert annotations require
+  - Pathologists
+  - Biologists
+  - Hours per slide
++ Class imbalance \
+  Many tasks involve rare events (Mitoses, …)
++ Whole slide images (WSI) can be
+  - 100,000 x 100,000 pixels
+  - 10GB per image
+  - Multiple channels (fluorescence)
++ Domain shifts
+  - Scanner types
+  - Straining protocol
+  - population
++ Explainability
+  - Interpretable predictions
+  - Visual explanations
 
-1. Data: Expert annotations are expensive and time-consuming (pathologists spend hours per slide).
-2. Whole Slide Images (WSI): Images can be massive (e.g., $100,000 times 100,000$ pixels, ~10GB per image).
-3. Class Imbalance: Tasks often involve "rare events" like mitoses.
-4. Domain Shifts: Variations in scanner types, staining protocols, and patient populations.
+=== Image Level Challenges
+
+#figure(
+  image("../assets/image_level_challenges.png", height: 190pt),
+)
+
+=== Annotation Challenges: Weak labels
+Truth labels are less accurate than required
+- Case-level annotation
+- Slide-level annotation
+- Region-level annotation
+- Tile-level annotation
+- (Pixel-level annotation)
+
+=== From WSI to Tiles
+
+On the size of the tiles which are usually 224x224 the image classification happens. 
+
+#figure(
+  image("../assets/wsi.png", height: 190pt),
+)
+
 
 == Multiple Instance Learning (MIL)
 
@@ -80,24 +207,43 @@ White light passes through the sample, and the image is based on absorption by s
 Due to the size of WSIs and the lack of pixel-level labels, we often use Weakly Supervised Learning through MIL.
 
 #definition(title: "Multiple Instance Learning (MIL)")[
-  Instead of individual labeled samples, we have bags of instances $X_j = {x_{j 1}, x_{j 2}, dots, x_{j K}\}$.
+  Instead of individual labeled samples, we have bags of instances/samples $X_j = {x_{j 1}, x_{j 2}, dots, x_{j K}\}$.
   - A bag is labeled $Y=0$ if all instances are negative.
   - A bag is labeled $Y=1$ if at least one instance is positive.
 ]
 
 #theorem(title: "Permutation Invariance")[
   A MIL scoring function $S(X)$ must be symmetric (invariant to the order of instances). It can be decomposed as:
-  $ S(X) = g(sum_{x \in X} f(x)) $
+  $ S(X) = g(sum_(x in X) f(x)) $
+  where $f$ and $g$ are sutiable transformations.
 ]
+#theorem(title: "")[
+For any $epsilon > 0$, a Hausdorff continuous symmetric $S: bb(R)^(K times D) arrow bb(R)$ can be arbitrarily approximated by
 
+$ |S(bold(X)) - g(max_(bold(x) in bold(X)) f(bold(x)))| < epsilon. $
+]
 === Deep MIL Approaches
-1. Instance-level approach: $f$ is an instance classifier; scores are aggregated.
-2. Embedding-level approach: $f$ maps instances to low-dimensional embeddings, which are then pooled to create a bag representation for the classifier $g$.
++ Transform each instance $bold(x)$ using the transformation $f_theta$
++ Combine transformed instances using a symmetric (permutation-invariant) function $sigma$ (also called MIL *pooling* function)
++ Transform combined instances using a function $g_psi$ to obtain
 
-=== Attention-based MIL Pooling
+Two main approaches:
+- *Instance-level approach*\
+  The transformation $f$ is an instance-level classifier. The instance-level scores are aggregated by MIL pooling $sigma$. The function $g$ is the identity.
+- *Embedding-level approach*\
+  The transformation $f$ maps instances to low-dimensional embeddings. MIL pooling $sigma$ used to obtain bag representation. $g$ becomes a bag-level classifier.
 
-The bag representation $z$ is computed as a weighted sum of instance embeddings $h_k$:
-$ z = sum_{k=1}^K a_k h_k $
-Where the attention weights $a_k$ are:
-$ a_k = (exp(w^T tanh(V h_k))) / (sum_{j=1}^K exp(w^T tanh(V h_j))) $
-*Gated variant*: $a_k prop exp(w^T (tanh(V h_k) dot.o sigma(U h_k)))$.
+
+=== Attention-based MIL pooling
+$ sigma(bold(h)_1, ..., bold(h)_K) = sum_(k=1)^K a_k bold(h)_k, $
+where $bold(h)_k = f(bold(x)_k) in RR^M$ and the attention weights are computed as
+$ a_k = (exp(w^top tanh(V bold(h)_k))) / (sum_(j=1)^K exp(w^top tanh(V bold(h)_j))) $
+$w in RR^(L times 1)$ and $V in RR^(L times M)$ are learnable weight.
+
+=== Gated attention variant
+$ a_k = (exp(w^top (tanh(V bold(h)_k) dot.o sigma(U bold(h)_k)))) / (sum_(j=1)^K exp(w^top (tanh(V bold(h)_j) dot.o sigma(U bold(h)_j)))) $
+where $U in RR^(L times M)$ is also learnable.
+
+#figure(
+  image("../assets/deep_multiple.png", height: 190pt),
+)
