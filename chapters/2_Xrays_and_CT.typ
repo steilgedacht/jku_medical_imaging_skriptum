@@ -16,7 +16,7 @@ They are a form of ionizing radiation—radiation with enough energy to eject el
 
 What needs to hold: Bound energy < Unbound energy + Electron Energy. 
 
-The binding energy is 13.6 eV which is the binding energy of hydrogen.
+The binding energy of hydrogen is 13.6 eV.
 For a Medical CT you need around 100keV, for Mammography you need around 20keV. 
 
 === Forms of Ionizing Radiation
@@ -35,7 +35,7 @@ For a Medical CT you need around 100keV, for Mammography you need around 20keV.
 ]
 
 == Interaction of Energetic Electrons with Matter
-- *Collision transfer* (~99% $arrow$ heat): Collision with other electrons until kinetic energy is exhausted. If they bump into each other, then energy can be transfered to the other electorn which then will emit infrared photons, which is heat.
+- *Collision transfer* (~99% $arrow$ heat): Collision with other electrons until kinetic energy is exhausted. If they bump into each other, then energy can be transfered to the other electron which then will emit infrared photons, which is heat.
 - *Radiative transfer* (~1% $arrow$ X-ray):
   - Eject inner shell electron, generating *characteristic X-ray radiation*.
   - Electron flies close to the atom nucleus and is braked by nucleus, generating *Bremsstrahlung X-ray*.
@@ -61,7 +61,7 @@ You have a tube current that creates a tube voltage between a tungsten rotating 
   image("../assets/X-ray-generation.png", width: 70%),
 ) 
 
-We do want the high energy photons that can "leave the body" distribution. 
+We do want the high energy photons that come from the "leaving the body" distribution. 
 #figure(
   image("../assets/X-ray_spectrum.png", height: 150pt),
 ) 
@@ -104,7 +104,7 @@ Scattering (Compton effect) causes photons to hit the detector from multiple ang
 
 == Attenuation of different tissue types
 
-Different tissue types have different $mu$. That enables us to images something.
+Different tissue types have different $mu$. That enables us to image the inner world of the body.
 
 #figure(
   image("../assets/attenuation.png", height: 150pt),
@@ -303,8 +303,9 @@ $ = integral_(-oo)^(oo) integral_0^pi G(rho, theta) dot exp(i 2 pi rho (cos thet
 
 
 #definition(title: "Hounsfield Units (HU)")[
-  Standardized scale to compare CT scans:
+  Standardized scale to compare different materials in CT scans:
   $ h = 1000 dot (mu - mu_"Water") / (mu_"Water" - mu_"Air") $
+
 ]
 #table(
   columns: (1fr, 1fr, 1fr),
@@ -312,17 +313,10 @@ $ = integral_(-oo)^(oo) integral_0^pi G(rho, theta) dot exp(i 2 pi rho (cos thet
   align: horizon,
   stroke: (x, y) => if y == 0 { none } else { 0.5pt + gray.lighten(50%) },
   
-  // Header
-  fill: (x, y) => if y == 0 { gray.darken(40%) } else if calc.even(y) { gray.lighten(90%) },
   table.header(
     [*Substance*], [], [*HU*]
   ),
   
-  // Header text color
-  table.cell(colspan: 2, text(fill: white, weight: "bold")[Substance]), 
-  table.cell(text(fill: white, weight: "bold")[HU]),
-
-  // Rows
   [Air], [], [-1000],
   [Fat], [], [-120 to -90],
   [Bone], [Cancellous], [+300 to +1900],
