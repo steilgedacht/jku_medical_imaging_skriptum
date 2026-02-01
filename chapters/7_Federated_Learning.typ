@@ -22,7 +22,7 @@ Breaches of these regulations can lead to identity theft, loss of trust, and sev
 *Anonymization*: To be truly anonymized, the process must be irreversible.
 
 #remark()[
-  *Re-identification Risk*: A famous study by Sweeney (2000) showed that $87%$ of US citizens can be uniquely identified using only their ZIP code, birth date, and sex.
+  *Re-identification Risk*: A famous study by Sweeney (2000) showed that $87%$ of US citizens can be uniquely identified using only their ZIP code, birth date, and sex. Thats why you dont use the birth date anymore, but the age.
 ]
 
 == From Centralized to Federated Learning
@@ -34,86 +34,295 @@ Breaches of these regulations can lead to identity theft, loss of trust, and sev
 
 
 === Comparison: Centralized vs. Federated Learning
-| Feature | Centralized | Federated |
-| :--- | :--- | :--- |
-| Data location | Cloud / Central server | Distributed nodes (edge) |
-| Training | Primarily in the cloud | Primarily at the edge |
-| Communication | Nodes share local data | Nodes share model weights |
-| Privacy | Low user data privacy | High user data privacy |
-| Heterogeneity | Cannot handle easily | Can operate on heterogeneous data |
+#table(
+  columns: (1fr, 1fr),
+  inset: 10pt,
+  align: (left, left),
+  
+  [CENTRALIZED LEARNING], [FEDERATED LEARNING],
+  
 
+  [Trained on centralized data], [Trained on distributed data],
+  
+  [Data resides on the cloud or centralized server], [Data resides at the various nodes in the network],
+  
+  [Training takes place primarily in the cloud], [Training happens primarily at the edge],
+  
+  [Nodes/edge devices share local data], [Nodes/edge devices share local version of the mode],
+  
+  [Cannot operate on heterogeneous data], [Can operate on heterogeneous data],
+  
+  [Low user data privacy], [High user data privacy],
+)
 
-== Centralized FL - Mathematical Formulation
+=== Centralized vs Decentralized Federated Learning
 
+#figure(
+  image("../assets/central_vs_decentral.png", height: 150pt),
+)
+== Centralized Federated Learning
+Let's define the terms:
+
+$t$ communication round
+
+Server
+- $w^t$ model weights
+- $T$ number of rounds
+- $C$ fraction of sampled clients of each round
+
+Client
+- $w_k^t$ weights on the client site
+- $E$ number of local epochs
+- $eta$ learning rate
+- $P_k$ subset of the data for client k
+- $n_k$ number of samples at the k client
+
+#figure(
+  image("../assets/centralized_fl.png", height: 150pt),
+)
+
+=== Mathematical Formulation
 
 Let $D = (x_i, y_i)^n_(i=1)$ be a dataset distributed to $K$ clients $C_k$ where $k in {1, ... , k}$. We denote by $P={1,... n}$ and each client has a subset $P_k$ such that $P= union.big_(k=1)^n P_k$. The goal is to solve:
-$ min_w f(w) = min 1/n sum_(i=1)^N f_i(w) $
+$ min_w f(w) = min 1/n sum_(i=1)^N f_i (w) $
 where $f_i(w)= l(x_i, y_i, w)$ is a loss function. Then we have that the total loss function 
-$ f(w) = 1/n sum^n_(i=1) f_i(w) = sum^n_(i=1) 1/n f_i(w) = sum^K_(k=1) 1/n n_f F_k(w) $
-with $F_k(w) = 1/n_k sum_(i in P_k) f_i(w)$ which is the loss at the distributed clients. So the loss function of the sample is the same, but now we combined the indices into the clients and then we write it by $n_k$. It is still the same thing, we just shifted the indices. At the client we do the same thing as globally. 
+$ f(w) = 1/n sum^n_(i=1) f_i (w) = sum^n_(i=1) 1/n f_i (w) = sum^K_(k=1) 1/n n_f F_k (w) $
+with $F_k (w) = 1/n_k sum_(i in P_k) f_i(w)$ which is the loss at the distributed clients. So the loss function of the sample is the same, but now we combined the indices into the clients and then we write it by $n_k$. It is still the same thing, we just shifted the indices. At the client we do the same thing as globally. 
 
-#remark()[
-  *Iterative Learning Concept*:
-  1. Central server chooses a model and transmits it to nodes.
-  2. Nodes train the model locally with their own data.
-  3. Nodes upload local updates to the server.
-  4. Server pools results and generates a new global model.
-]
 
 === Algorithms: FedSGD and FedAVG
-- FedSGD: A simple version where each client performs one step of gradient descent per round.
-- FedAVG: Substantially reduces communication by allowing clients to perform multiple local epochs before aggregating.
+==== FedSGD
+A simple version where each client performs one step of gradient descent per round.
 
-#theorem(title: "FedAVG Update Rule")[
-  The server aggregates weights from a subset of sampled clients $S_t$:
-  $ w_(t+1) arrow.r sum_(k in S_t) n_k/n w_(t+1)^k $
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+Server executes:
+#set enum(indent: 1em)
++ *for* each round $t = 1, 2, ..., T$ *do*
+  + $S_t subset.eq {1, ..., K}$
+  + *for* each client $k in S_t$ *do in parallel:*
+    + $g_k = nabla F_k (w_t) = nabla (1/n_k sum_(i in P_k) f_i (w_t))$
+  + $g_t arrow.l sum_(k in S_t) g_k n_k / n$
+  + $w_(t+1) arrow.l w_t - eta g_t$
 ]
+The advantage is that it is a simple algorithm and theory of SGD applies but we have a high server-client communication utilization, which might be slow.
+
+==== FedAVG
+
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+at server initialize $w^0$. \
+*for* each round $t = 1, 2, ..., T$ *do*
+#set enum(indent: 1em)
++ sample clients $S_t subset.eq {1, ..., K}$
++ $w_k^1 = w^t$
++ *for* each _local_ epoch $e = 1, 2, ..., E$ *do*
+  + compute mini-batch gradient $g_k(w_k^e)$
+  + $w_k^(e+1) arrow.l w_k^e - eta g_k (w_k^e)$
++ return $w_k^E$ to server
+
+at the server we aggregate the weights:
+$ m_t arrow.l sum_(k in S_t) n_k $
+$ w^(t+1) arrow.l sum_(k in S_t) n_k / m_t w_k^E $
+]
+The advantage is that it substantially reduced communication utilization with a simple aggregation, but the convergence is slower compared to SGD in theory.
+
+#figure(
+  image("../assets/fedsdg_vs_fedavg.png", height: 150pt),
+)
 
 
 == Non-IID Data Challenges
 
 
-In FL, data is typically not independent and identically distributed (Non-IID).
-1. Feature distribution skew: Different demographics or devices ($P_k(x)$ varies).
-2. Label distribution skew: Different distribution of labels ($P_k(y)$ varies).
-3. Concept shift: Same feature, different labels (e.g., inter-reader variability).
+Typically, we assume that data samples $(x_i, y_i) tilde P(X, Y)$ are i.i.d. (independent and identically distributed).
 
-*Solution*: SCAFFOLD uses control variables to correct for "client drift" caused by non-IID data.
+2-step modelling approach:
+1. $k tilde p(k)$ : draw client
+2. $(x, y) tilde P_k(X, Y)$ : draw data sample from client distribution
+
+- Clients are *non-IID* if $P_k != P_l$ for $k, l in {1, ..., K}, l != k$.
+- Let us assume that we can decompose $P_k$ into:
+  - $p_k (y | x) dot p_k (x)$ or
+  - $p_k (x | y) dot p_k (y)$
+
+==== Non-IID Cases:
++ *Feature distribution skew* \
+  $P_k (x) != P_l (x)$ but $P_k (y | x) = P_l (y | x)$ \
+  _e.g., shift in demographics, different devices_
+
++ *Label distribution skew* \
+  $P_k (y) != P_l (y)$ but $P_k (x | y) = P_l (x | y)$ \
+  _e.g., different distribution of labels_
+
++ *Concept shift (same label but different features)* \
+  $P_k (x | y) != P_l (x | y)$ but $P_k (y) = P_l (y)$ \
+  _e.g., houses around the globe_
+
++ *Concept shift (inter-reader variability)* \
+  $P_k (y | x) != P_l (y | x)$ but $P_k (x) = P_l (x)$ \
+  _e.g., personal preferences_
+
+== Scaffold
+
+In FedSGD, we compute the updates as:
+$ w_h^(e+1) arrow.l w_h^e - eta 1/K sum_(k=1)^K underbrace(nabla F_k (w_h^e), g_k (w_h^e))  $
+
+Since computing the full sum is often not possible, control variables are introduced:
+- $c_k approx nabla F_k (w_h^e)$ (local control variable)
+- $c approx 1/K sum_(k=1)^K nabla F_k (w_h^e)$ (global control variable)
+
+Then, SCAFFOLD updates as:
+$ g_k(w_h^e) - c_k + c approx 1/K sum_(k=1)^K nabla F_k (w_h^e) $
+
+
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+*for each round* $t = 1, 2, ... T$:
+  - sample clients $S_t subset.eq {1, ..., K}$
+  - distribute $(w_t, c)$ to $S_t$
+  - *for each client* $k in S_t$ *do in parallel*:
+    - $w_k^1 arrow.l w_t$
+    - *for* $e = 1, ..., E$ *do*:
+      - compute the minibatch gradient $g_k (w_k^e)$
+      - $w_k^(e+1) arrow.l w_k^e - eta (g_k (w_k^e) - c_k + c)$
+    - $c_k^+ arrow.l g_k(w_t)$ or $c_k - c + 1/(E eta) (w_t - w_k^E)$
+    - communicate deltas to server: $(Delta w_k, Delta c_k) arrow.l (w_k^E - w_t, c_k^+ - c_k)$
+    - $c_k arrow.l c_k^+$
+  - *on the server do*:
+    - $(Delta w_t, Delta c_t) = 1/(|S_t|) sum_(k in S_t) (Delta w_k, Delta c_k)$
+    - $w_(t+1) arrow.l w_t + eta Delta w_t$
+    - $c_(t+1) arrow.l c_t + (|S_t|)/n Delta c_t$
+]
+
+#remark()[
+  During Covid-19  this was tested world-wide and it brought in an performance boost compared to the loacl model.
+#figure(
+  image("../assets/covid19.png", height: 150pt),
+)
+
+]
 
 == Personalization Techniques
+Do we want to have the same model everywhere? Somethimes it makes sense to let it adapt to local cirucumstances. 
 To improve performance on heterogeneous data, models can be personalized:
-- Personalization Layers: Splitting the model into global layers (shared) and local layers (private to each client).
-- FedBN: Keeping Batch Normalization parameters local to account for feature shifts.
-- Hypernetworks: Using a central network to predict personalized model parameters for each client based on their data distribution.
 
-== Privacy and Security in FL
+Personalization Layers: Splitting the model into global layers (shared, blue) and local layers (private to each client).
+#figure(
+  image("../assets/personalization.png", height: 150pt),
+)
+If we now have a classification task, which part of the network should we make global and which make me local? The last layers are responsible for the classification so it would make sense to locallize the head of the model.
 
+=== FedBN 
+Keeping Batch Normalization parameters local to account for feature shifts turned out to work really well.
+#figure(
+  image("../assets/fedbn.png", height: 150pt),
+)
+
+=== Hypernetworks
+
+What is this hypernetwork doing? It gives us client specific weights. We point in a vector, embedding or whatever to a network and the network gives us weights for the network that we want to train. The output is then a regression problem because we want to predict continuous values and we have a huge output -> number of model parameters. So this is a hard task. The basic principle again is then that we give the predicted models from the server to the client and the client gives us then the weights back.
+
+$ cal(L) = arg min_(phi, {v_k}_(k=1)^K) 1/K sum_(k=1)^K F_k (h_phi (v_k)) $
+$ w_k = h_phi (v_k) $
+
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+Algorithm for training hypernetwork:
++ *for* each round $t = 1, 2, ..., T$ *do*
+  + sample clients $S_t subset.eq {1, ..., K}$
+  + set $w_k = h_phi (v_k)$ for all $k in S_t$ and $overline(w)_k = w_k$
+  + *for* each $e in {1, ..., E}$ *do*
+    + sample mini-batch $B$
+    + $overline(w)_k^e arrow.l overline(w)_k - eta nabla_w F_k (B)$
+  + $Delta w_k = overline(w)_k^E - w_k$ transfer to server
+  + *aggregate at server:*
+      $ phi = phi - alpha (nabla_phi h_phi (v_k)) Delta w_k $ 
+      $ v_k = v_k - alpha (nabla_v h_phi (v_k)) Delta w_k $
+  ]
+== Privacy and Security in Federated Learning
 
 Despite data staying local, FL is vulnerable to several attacks:
 1. Inference Attacks: Inferring class representatives, membership, or even training samples from gradients (Deep Leakage from Gradients).
 2. Malicious Server: A server using a GAN to reconstruct client data.
 3. Poisoning Attacks: Backdoor or replacement attacks to manipulate the global model.
 
+#example(title:"Inference of class representatives")[
+  #figure(
+  image("../assets/class_represenatives.png", height: 150pt),
+ )
+  #figure(
+  image("../assets/class_represenatives2.png", height: 100pt),
+ )
+
+]
+#example(title:"Inference of Training Samples and Labels")[
+  #figure(
+  image("../assets/training_samples.png", height: 180pt),
+ )
+]
+Sharing the gradient can give away a lot of information.
+#example(title:"Poison attack")[
+  #figure(
+  image("../assets/poison.png", height: 180pt),
+ )
+]
 == Federated Learning with Differential Privacy (DP)
 
+#definition(title: "differential privacy")[
+A randomized mechanism (algorithm) $cal(M) : cal(X)^n -> cal(R)$ satisfies $(epsilon, delta)$-DP if for all measurable sets $S subset.eq cal(R)$ and for any two adjacent datasets $D, overline(D) subset cal(X)^n$ (i.e., differing in one individual's data)
 
-#definition(title: "Differential Privacy")[
-  A mechanism $M$ satisfies $(epsilon, delta)$-DP if for any two adjacent datasets $D, D'$ differing by one individual:
-  $ P[M(D) in S] lt.eq e^epsilon P[M(D') in S] + delta $
-]
+$ PP[cal(M)(D) in S] <= exp(epsilon) dot PP[cal(M)(overline(D)) in S] + delta, $
 
-#remark()[
-  *Handwritten Sensitivity derivation for FedAvg*:
-  The sensitivity $S_k$ of the update is given by the maximum change in weights. To ensure DP, updates must be:
-  1. Clipped: $bar(w) = w / max(1, norm(w)_2 / C)$.
-  2. Noised: Adding Gaussian noise $n tilde N(0, sigma^2 I)$ proportional to the sensitivity.
+where $epsilon, delta > 0$.
+
+*Note:* If $delta = 0$, $cal(M)$ is called pure $epsilon$-differential private.
 ]
 
 
-=== FedAVG with DP (Pseudocode)
-- For each round $t$:
-  - Sample clients $k$.
-  - Clients update local weights $w^k$.
-  - Clip local updates.
-  - Add noise to the clipped updates.
-  - Server aggregates noised weights and broadcasts the new global model.
+
+#definition(title: "Sensitivity")[
+Let $W$ be a metric space with distance function $d_W (dot, dot)$. 
+The sensitivity $S_W (h)$ of a function $h : cal(X)^n -> W$ is the amount that the function value varies when a *single* entry changes:
+
+$ S_W (h) := sup_(w, overline(w) : d_cal(w)(w, overline(w)) = 1) d_W (h(w), h(overline(w))) $
+
+$arrow.double$ Note the relation to the Lipschitz constant of a function.
+]
+
+#figure(
+  image("../assets/differential_privacy.png", height: 180pt),
+ )
+
+=== Sensitivity Analysis
+Assume the model weights $w_k$ are bounded: $||w_k|| <= C$.
+Then, the sensitivity of the $k$-th client update in FedAVG is given by:
+
+$ S_k &= sup_(P_k, overline(P)_k) || arg min_w F_k(w; P_k) - arg min_w F_k (w; overline(P)_k) || \
+&= sup_(P_k, overline(P)_k) || arg min_w 1/(|P_k|) sum_(i in P_k) f_i (w) - arg min_w 1/(|P_k|) sum_(j in overline(P)_k) f_j (w) || \
+&= 1/(|P_k|) sup_(P_k, overline(P)_k) || w_k - overline(w)_k || \
+&= (2C) / (|P_k|) $
+
+To ensure that the local training mechanism 
+$ M_epsilon = [arg min_w 1/(|P_k|) sum_(i in P_k) f_i (w)] + n, $
+where $n ~ N(0, sigma^2 I)$, preserves $(epsilon, delta)$-DP, we need to add noise with level:
+$ sigma_k >= c dot S_k / epsilon $
+where $c >= sqrt(2 ln(1.25/delta))$.
+
+
+== FedAVG with DP Algorithm
+
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+*For each round* $t = 1 ... T$:
+1. *Sample client* $k in {1, ..., K}$
+2. *Update the local weights:*
+   $ w_k^t arrow.l arg min_w { F_k (w) + mu/2 ||w - tilde(w)^(t-1)||_2^2 } $
+3. *Clip the local weights:*
+   $ w_k^t arrow.l w_k^t / max(1, (||w_k^t||) / C) $
+4. *Add noise:*
+   $ tilde(w)_k^t arrow.l w_k^t + n_k^t, quad n_k^t ~ cal(N)(0, sigma_k) $
+5. *Send to server*
+6. *At server:*
+   $ w^t = sum_(i=1)^k n_k / n w_k^t $
+7. *The server broadcasts:*
+   $ tilde(w)^t = w^t + n_s^t, quad n_s^t ~ cal(N)(0, sigma_s) $
+ ]
+#figure(
+  image("../assets/FLwithDP.png", height: 180pt),
+ )
