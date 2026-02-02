@@ -333,12 +333,12 @@ $ e_i = a_i^T x - y_i $
 
 Idea: minimize the squared error
 
-$ hat(x) = arg min E(x) := 1/2 sum_(i=1)^m (a_i^T x - y_i)^2 = 1/2 ||A x - y||_2^2 = 1/2 ||e||_2^2 $
+$ hat(x) = arg min E(x) quad "where" quad E(x) := 1/2 sum_(i=1)^m (a_i^T x - y_i)^2 = 1/2 ||A x - y||_2^2 = 1/2 ||e||_2^2 $
 
 Here we define $e = A x - y$. How do we solve this optimization problem? 
 
 $nabla E(x) = 0$ where $nabla E(x) in RR^n$
-$ frac(partial e, partial x) frac(partial E, partial e) = frac(partial e, partial x) 1/2 2 e = A^T e = A^T (A x - y) = 0 $
+$ (partial E) / (partial x) =  frac(partial e, partial x) frac(partial E, partial e) = frac(partial e, partial x) 1/2 2 e = A^T e = A^T (A x - y) = A^T A x - A^T y =  0 $
 
 $ (A^T A) x = A^T y $
 
@@ -355,7 +355,8 @@ $ x = (A^T A)^(-1) A^T y $
       rows: (40pt, 40pt),
       align: center + horizon,
       stroke: 1pt + red,
-      [$x_1$], [$x_2$],
+      fill: white,
+      text(fill: black)[$x_1$], text(fill: black)[$x_2$],
       [$x_3$], [$x_4$]
     ),
     caption: [Grid representation of variables $x_i$]
@@ -399,7 +400,7 @@ $ partial / (partial x) cal(L) = (partial E) / (partial x) + (partial C) / (part
 From the initial setting where we want to find the minimum of $x$ we can define now $E$ and $C$:
 $ E(x) = 1/2 ||x||_2^2 $ $ C(x) = y - A x = 0 quad <=> quad h(x, tau) = 1/2 norm(x)^2_2 + chevron.l y-A x, tau chevron.r $ 
 
-Then we can write out the Lagrane Terms and solve them for $x$:
+Then we can write out the Lagrange terms and solve them for $x$:
 
 $ partial / (partial x) cal(L) = x - A^T tau = 0 $$ x = A^T tau $ 
 #v(5mm)
@@ -410,16 +411,18 @@ $ x = A^T (A A^T)^(-1) y $
 
 == Generalized Inverse
 
-Let $X = RR^n$, $Y = RR^m$ and the inverse problem $A x = y$ with $A in RR^(m times n)$.
+Let $X in RR^n$, $Y in RR^m$ and the inverse problem $A x = y$ with $A in RR^(m times n)$.
 
 We define the generalized inverse as:
 $ A_g^(-1) = (U_p Lambda_p V_p^T)^(-1) = (V_p^T)^(-1) Lambda_p^(-1) U_p^(-1) = V_p Lambda_p^(-1) U_p^T $
 
-
+Note that here $U$ is the eigenvectors of $A A^T$ and $V$ are the eigenvectors of $A^T A$. And note that $U^T_p U_p = I$, that's why we can say $U^T_p = U_p^(-1) $ and $ U_p= (U^T_p)^(-1)$. The same holds for $V_p$.
 Check if Generalized Inverse computes the exact Least Squares and Minimum Length solutions:
 
 ==== I. $p = m = n$:
-$ A_g^(-1) = V_p Lambda_p^(-1) U_p^T quad | dot A = U_p Lambda_p V_p^T $
+
+As we have shown above, if $m=n$ the calulations can be done via Eigenvectors and Eigenvalues:
+$ A_g^(-1) = V_p Lambda_p^(-1) U_p^T quad  quad | dot A = U_p Lambda_p V_p^T $
 $ A_g^(-1) A = V_p Lambda_p^(-1) underbrace(U_p^T U_p, I) Lambda_p V_p^T = V_p underbrace(Lambda_p^(-1) Lambda_p, I) V_p^T = I $
 
 ==== II. $p = m > n$:
