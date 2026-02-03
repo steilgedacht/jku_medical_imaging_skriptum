@@ -306,7 +306,7 @@ Cons (-): Have to tune hyperparameters (e.g., $mu$) during inference.
 
 === Algorithm: Plug-and-play image restoration with deep denoiser prior (DPIR)
 
-#rect(width: 100%, stroke: 0.5pt, inset: 10pt)[
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray, width: 100%)[
   *Input:* Deep denoiser prior model, denablaed image $y$, denablaation operation $A$, image noise level $sigma$, $sigma_k$ of denoiser prior model at $k$-th iteration for a total of $K$ iterations, trade-off parameter $lambda$. \
   *Output:* Restored image $z_K$.
 

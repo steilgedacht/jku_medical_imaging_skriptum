@@ -154,12 +154,14 @@ Designed for volumetric (3D) medical images.
 - Objective: Uses the Dice Loss to handle class imbalance (e.g., when the tumor is much smaller than the background).
 
 $ D(theta) = 1 - (2 sum_(i=1)^I hat(p)_i (theta) s_i) / (sum_(i=1)^I hat(p)_i ( theta) + sum_(i=1)^I s_i) = 1 - underbrace(2 (chevron.l hat(p) (theta) , s chevron.r) / ( chevron.l hat(p) (theta), 1 chevron.r  + chevron.l s, 1 chevron.r), "Dice Coefficient") $
+
+where $s$ is the ground truth and $hat(p)(theta)$ is the probability that a voxel is part o that ground truth class.
 #figure(
   image("../assets/vnet.png", height: 190pt),
   caption: "V-Net"
 )
 
-=== Comparison of CE & Dice Loss
+=== Comparison of Cross Entropy & Dice Loss
 
 $ "CE" = - sum_i w_i [s_i log hat(p)_i + (1 - s_i) log (1 - hat(p)_i)] $
 
@@ -175,14 +177,14 @@ $ frac(partial "CE", partial theta) &= - sum_i w_i [ frac(partial hat(p)_i, part
 &= - sum_i w_i frac(partial hat(p)_i, partial theta) frac(1, hat(p)_i (1 - hat(p)_i)) [s_i - hat(p)_i] $
 
 
-$ frac(partial D, partial theta) &= 0 - frac(partial hat(p)_i, partial theta) 2 frac(S dot B - A dot 1, B^2) \
-&= - frac(partial hat(p)_i, partial theta) dot 2 frac(s B - A 1, B^2) $
+$ frac(partial D, partial theta) &= 0 - frac(partial hat(p)_i, partial theta) 2 frac(S dot B - A dot bold(1), B^2) \
+&= - frac(partial hat(p)_i, partial theta) dot 2 frac(s B - A dot bold(1) , B^2) $
 
 
 When we compare the gradients:
-- local vs global information
-- stable & no vanishing gradient for CE (in logits). This does not hold for the Dice
-- CE has a strong signal initially during training
+- local vs global information: Due to the $A$ in the formula, this gradient has global information in it, because A is the correlation between the prediction and the target.
+- stable & no vanishing gradient for CE (in logits) as the term $hat(p)_i (1 - hat(p)_i))$ cancels (the gradient from the sigmoid with respect to the logits is exactly this term). This does not hold for the Dice
+- CE has a strong signal initially during training. Dice works better when the images are already almost aligned.
 
 === Advanced Architectures
 nnU-Net: A "self-configuring" method that automatically adapts the U-Net architecture and hyperparameters to a specific dataset. It is thought as a Out of the box experience.

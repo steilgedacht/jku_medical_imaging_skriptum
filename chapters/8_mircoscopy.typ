@@ -98,6 +98,10 @@ Traditional manual microscopy analysis is:
 === Brightfield Microscopy
 
 White light passes through the sample, and the image is based on absorption by stains. This is the most used method in standard histology.
+
+#figure(
+  image("../assets/brightfield_microscopy2.png", height: 260pt),
+ )
 #figure(
   image("../assets/brightfield_microscopy.png", height: 260pt),
  )

@@ -94,32 +94,32 @@ with $F_k (w) = 1/n_k sum_(i in P_k) f_i (w)$ which is the loss at the distribut
 ==== FedSGD
 A simple version where each client performs one step of gradient descent per round.
 
-#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray, width: 100%)[
 Server executes:
 #set enum(indent: 1em)
 + *for* each round $t = 1, 2, ..., T$ *do*
   + $S_t subset.eq {1, ..., K}$
   + *for* each client $k in S_t$ *do in parallel:*
     + $g_k = nabla F_k (w_t) = nabla (1/n_k sum_(i in P_k) f_i (w_t))$
-  + $g_t arrow.l sum_(k in S_t) g_k n_k / n$
+  + we add the gradients weighted by the sample number on the client side \ $g_t arrow.l sum_(k in S_t) g_k n_k / n$ 
   + $w_(t+1) arrow.l w_t - eta g_t$
 ]
 The advantage is that it is a simple algorithm and theory of SGD applies but we have a high server-client communication utilization, which might be slow.
 
 ==== FedAVG
 
-#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray, width: 100%)[
 at server initialize $w^0$. \
 *for* each round $t = 1, 2, ..., T$ *do*
 #set enum(indent: 1em)
 + sample clients $S_t subset.eq {1, ..., K}$
 + $w_k^1 = w^t$
 + *for* each _local_ epoch $e = 1, 2, ..., E$ *do*
-  + compute mini-batch gradient $g_k(w_k^e)$
+  + compute mini-batch gradient $g_k (w_k^e)$
   + $w_k^(e+1) arrow.l w_k^e - eta g_k (w_k^e)$
 + return $w_k^E$ to server
 
-at the server we aggregate the weights:
+at the server we aggregate the weights and add them together weighted by their sample number:
 $ m_t arrow.l sum_(k in S_t) n_k $
 $ w^(t+1) arrow.l sum_(k in S_t) n_k / m_t w_k^E $
 ]
@@ -135,46 +135,46 @@ The advantage is that it substantially reduced communication utilization with a 
 
 Typically, we assume that data samples $(x_i, y_i) tilde P(X, Y)$ are i.i.d. (independent and identically distributed).
 
-2-step modelling approach:
-1. $k tilde p(k)$ : draw client
-2. $(x, y) tilde P_k(X, Y)$ : draw data sample from client distribution
+We have now a 2-step modelling approach:
+1. $k tilde p(k)$ : draw a client from the distribution of clients
+2. $(x, y) tilde P_k(X, Y)$ : draw data sample from distribution at client
 
-- Clients are *non-IID* if $P_k != P_l$ for $k, l in {1, ..., K}, l != k$.
-- Let us assume that we can decompose $P_k$ into:
-  - $p_k (y | x) dot p_k (x)$ or
-  - $p_k (x | y) dot p_k (y)$
+We assume clients are *non-IID* (which is the fact in reality most of the time) if $P_k != P_l$ for $k, l in {1, ..., K}, l != k$.
+Let us assume that we can decompose $P_k$ into $P_k (y | x) dot P_k (x)$ or $P_k (x | y) dot P_k (y)$
 
-==== Non-IID Cases:
-+ *Feature distribution skew* \
+=== Non-IID Cases:
++ *Feature distribution skew:* So here the feature will be different \
   $P_k (x) != P_l (x)$ but $P_k (y | x) = P_l (y | x)$ \
   _e.g., shift in demographics, different devices_
 
-+ *Label distribution skew* \
++ *Label distribution skew:* So we have the same labels, but the distribution of labels is different \
   $P_k (y) != P_l (y)$ but $P_k (x | y) = P_l (x | y)$ \
-  _e.g., different distribution of labels_
+  _e.g., certain deseases only occur for elderly people_
 
-+ *Concept shift (same label but different features)* \
++ *Concept shift:* same label but different features \
   $P_k (x | y) != P_l (x | y)$ but $P_k (y) = P_l (y)$ \
-  _e.g., houses around the globe_
+  _e.g., houses around the globe are all look very different and have different features, but are still houses_
 
-+ *Concept shift (inter-reader variability)* \
++ *Concept shift:* inter-reader variability \
   $P_k (y | x) != P_l (y | x)$ but $P_k (x) = P_l (x)$ \
-  _e.g., personal preferences_
+  _e.g., personal preferences, certain doctors scale the images a bit larger_
 
 == Scaffold
 
 In FedSGD, we compute the updates as:
 $ w_h^(e+1) arrow.l w_h^e - eta 1/K sum_(k=1)^K underbrace(nabla F_k (w_h^e), g_k (w_h^e))  $
 
-Since computing the full sum is often not possible, control variables are introduced:
+Since computing the full sum of all gradients is often not possible, control variables are introduced to get rid of the stochastisity of the gradient. If we for example have only one summand here, then it is not a good estimate. If we take all clients into account, then 2 clients can go into completely different directions, but the overall averaged direction is the option that works for everyone. On the otherhand if we go first in the one direction, then in the other and then back again with another, is not so good. Therefore we introduce control variables to get rid of this stochastisity:
 - $c_k approx nabla F_k (w_h^e)$ (local control variable)
 - $c approx 1/K sum_(k=1)^K nabla F_k (w_h^e)$ (global control variable)
 
 Then, SCAFFOLD updates as:
-$ g_k(w_h^e) - c_k + c approx 1/K sum_(k=1)^K nabla F_k (w_h^e) $
+$ g_k (w_h^e) - c_k + c approx 1/K sum_(k=1)^K nabla F_k (w_h^e) $
+
+So we take our existend graident $g_k$ and substract the local aspect $c_k$ and then add our global gradient $c$. So we always have at every step the influence of the global best gradient.
 
 
-#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray, width: 100%)[
 *for each round* $t = 1, 2, ... T$:
   - sample clients $S_t subset.eq {1, ..., K}$
   - distribute $(w_t, c)$ to $S_t$
@@ -183,7 +183,7 @@ $ g_k(w_h^e) - c_k + c approx 1/K sum_(k=1)^K nabla F_k (w_h^e) $
     - *for* $e = 1, ..., E$ *do*:
       - compute the minibatch gradient $g_k (w_k^e)$
       - $w_k^(e+1) arrow.l w_k^e - eta (g_k (w_k^e) - c_k + c)$
-    - $c_k^+ arrow.l g_k(w_t)$ or $c_k - c + 1/(E eta) (w_t - w_k^E)$
+    - $c_k^+ arrow.l g_k (w_t)$ or $c_k - c + 1/(E eta) (w_t - w_k^E)$
     - communicate deltas to server: $(Delta w_k, Delta c_k) arrow.l (w_k^E - w_t, c_k^+ - c_k)$
     - $c_k arrow.l c_k^+$
   - *on the server do*:
@@ -191,6 +191,11 @@ $ g_k(w_h^e) - c_k + c approx 1/K sum_(k=1)^K nabla F_k (w_h^e) $
     - $w_(t+1) arrow.l w_t + eta Delta w_t$
     - $c_(t+1) arrow.l c_t + (|S_t|)/n Delta c_t$
 ]
+#figure(
+  image("../assets/scaffold.png", height: 150pt),
+)
+
+
 
 #remark()[
   During Covid-19  this was tested world-wide and it brought in an performance boost compared to the loacl model.
@@ -218,12 +223,12 @@ Keeping Batch Normalization parameters local to account for feature shifts turne
 
 === Hypernetworks
 
-What is this hypernetwork doing? It gives us client specific weights. We point in a vector, embedding or whatever to a network and the network gives us weights for the network that we want to train. The output is then a regression problem because we want to predict continuous values and we have a huge output -> number of model parameters. So this is a hard task. The basic principle again is then that we give the predicted models from the server to the client and the client gives us then the weights back.
+What is this hypernetwork doing? It gives us client specific weights. We take a vector, embedding or whatever and feed it to a network and the network gives us weights for the network that we want to train. The output is then a regression problem because we want to predict continuous values and we have a huge output $arrow.r$ number of model parameters. So this is a hard task. The basic principle again is then that we give the predicted models from the server to the client and the client gives us then the weights back.
 
 $ cal(L) = arg min_(phi, {v_k}_(k=1)^K) 1/K sum_(k=1)^K F_k (h_phi (v_k)) $
-$ w_k = h_phi (v_k) $
+where $w_k = h_phi (v_k) $ and $v_k$ is the input we give the hypernetwork and $h_phi$ is the hypernetwork itself.
 
-#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray, width: 100%)[
 Algorithm for training hypernetwork:
 + *for* each round $t = 1, 2, ..., T$ *do*
   + sample clients $S_t subset.eq {1, ..., K}$
@@ -265,30 +270,41 @@ Sharing the gradient can give away a lot of information.
 ]
 == Federated Learning with Differential Privacy (DP)
 
+We want to make it harder for attackers to retrieve images from the client side. We can achieve this with differential privacy.
+
+#figure(
+  image("../assets/differential_privacy.png", height: 180pt),
+ )
+
 #definition(title: "differential privacy")[
-A randomized mechanism (algorithm) $cal(M) : cal(X)^n -> cal(R)$ satisfies $(epsilon, delta)$-DP if for all measurable sets $S subset.eq cal(R)$ and for any two adjacent datasets $D, overline(D) subset cal(X)^n$ (i.e., differing in one individual's data)
+A randomized mechanism (algorithm) $cal(M) : X^n -> RR$ satisfies $(epsilon, delta)$-DP if for all measurable sets $S subset.eq cal(R)$ and for any two adjacent datasets $D, overline(D) subset cal(X)^n$ (i.e., differing in one individual's data)
 
 $ PP[cal(M)(D) in S] <= exp(epsilon) dot PP[cal(M)(overline(D)) in S] + delta, $
 
 where $epsilon, delta > 0$.
 
 *Note:* If $delta = 0$, $cal(M)$ is called pure $epsilon$-differential private.
+
+- $M$: The "Mechanism" or algorithm (analysis/query) running on the data.
+- $D$ and $overline(D)$: Two "adjacent" datasets. They are identical except one contains a specific individual's data (e.g., "Joe's Data") and the other does not.
+- $S$: Any possible outcome of the analysis.
+- $epsilon$ (Epsilon): The privacy budget.
+  - A smaller $epsilon$ means higher privacy (probabilities are closer).
+  - A larger $epsilon$ allows for more divergence, favoring utility over privacy.
+- $delta$ (Delta): The "failure probability." The small chance the privacy guarantee might fail.
 ]
 
 
 
 #definition(title: "Sensitivity")[
 Let $W$ be a metric space with distance function $d_W (dot, dot)$. 
-The sensitivity $S_W (h)$ of a function $h : cal(X)^n -> W$ is the amount that the function value varies when a *single* entry changes:
+The sensitivity $S_W (h)$ of a function $h : X^n -> W$ is the amount that the function value varies when a single entry changes:
 
 $ S_W (h) := sup_(w, overline(w) : d_cal(w)(w, overline(w)) = 1) d_W (h(w), h(overline(w))) $
 
 $arrow.double$ Note the relation to the Lipschitz constant of a function.
 ]
 
-#figure(
-  image("../assets/differential_privacy.png", height: 180pt),
- )
 
 === Sensitivity Analysis
 Assume the model weights $w_k$ are bounded: $||w_k|| <= C$.
@@ -308,7 +324,7 @@ where $c >= sqrt(2 ln(1.25/delta))$.
 
 == FedAVG with DP Algorithm
 
-#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray)[
+#block(fill: rgb("#f9f9f9"), inset: 10pt, radius: 4pt, stroke: 0.5pt + gray, width: 100%)[
 *For each round* $t = 1 ... T$:
 1. *Sample client* $k in {1, ..., K}$
 2. *Update the local weights:*
