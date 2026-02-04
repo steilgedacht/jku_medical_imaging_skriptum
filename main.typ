@@ -28,7 +28,7 @@
   title: "Medical Imaging",
   subtitle: "Lecture Skriptum",
   author: "Benjamin Bergmann",
-  date: "2026",
+  date: "Last updated: 4.2.2026",
 )
 
 #set page(

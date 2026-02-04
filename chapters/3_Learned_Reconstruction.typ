@@ -88,8 +88,16 @@ To optimize a function $f: RR^N -> RR$ decomposable into $f(x) = g(x) + h(x)$, w
 Iteration Rule:
 $ x_(k+1) = "prox"_(1/L h) (x_k - 1/L nabla g(x_k)) $
 
+where $L$ is the Lipschitz constant.
+
 Definition of Proximal Operator:
 $ "prox"_(1/L h) (macron(x)) = arg min_x (1/L h(x) + 1/2 ||x - macron(x)||_2^2 ) $
+
+How to read the Proximal Operator formula:
+
+The $x$ inside the norm is your ideal destination according to the gradient descent of the smooth function $g$.
+Notice that $g(x)$ is evaluated at the new potential point $x$, not at the old point $macron(x)$.
+The formula is searching for an $x$ that is a compromise. The quadratic term $norm(x - macron(x))_2^2$ penalizes you for moving too far from your gradient target, while $h(x)$ pulls you toward points that keep the non-smooth penalty low.
 
 Accelerated Version: FISTA (Fast Iterative Shrinkage & Thresholding Algorithm).
 
@@ -179,9 +187,9 @@ $ min_theta L(theta) = sum_(i=1)^n ||hat(x)_i (theta, y_i) - x_i||_2^2 "subject 
  Lower level problem
 $ hat(x)_i (theta, y_i) = arg min_x { E_theta (x, y_i) = 1/2 ||A x - y_i||_2^2 + R_theta (x) } $
 
-The challenge is to compute $ frac(partial L, partial theta) = sum_(i=1)^n (frac(partial hat(x)_i (theta, y_i), partial theta))) (hat(x)_i (theta, y_i) - x_i) $
+The challenge is to compute the gradient $ frac(partial L, partial theta) = sum_(i=1)^n (frac(partial hat(x)_i (theta, y_i), partial theta))) (hat(x)_i (theta, y_i) - x_i) $
 
-Here it is difficult to compute $ frac(partial hat(x)_i (y_i, theta), partial theta) $
+The difficult part: $ frac(partial hat(x)_i (y_i, theta), partial theta) $
 
 Let's do it step by step: 
 1. Solve the lower level problem (with sufficient precision). $ nabla_x E_theta (hat(x)_i (y_i, theta), y_i) approx 0 $

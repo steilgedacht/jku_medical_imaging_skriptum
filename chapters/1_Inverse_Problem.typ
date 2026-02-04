@@ -148,10 +148,10 @@ We can now start to categorize inverse problems:
 #definition(title: "Inner Product")[
   An inner product on a vector space $Y$ over a $FF$ is a map $ ⟨., .⟩: Y times Y -> FF $  with the following properties:
 
-  1. Symmetry: $⟨x, y⟩ = overline(⟨y, x⟩) quad x,y in Y$
-  2. Additivity: $⟨x , y + z ⟩ = ⟨x, y⟩ + ⟨x, z⟩ quad x,y,z in Y$
-  3. Homogeneity: $⟨lambda x, y⟩ = lambda ⟨x, y⟩ quad x,y in Y quad lambda in RR$
-  4. Positivity: $⟨x, x⟩ >= 0$ and $⟨x, x⟩ = 0 <==> x = 0$
+  1. *Symmetry:* $⟨x, y⟩ = overline(⟨y, x⟩) quad x,y in Y$
+  2. *Additivity:* $⟨x , y + z ⟩ = ⟨x, y⟩ + ⟨x, z⟩ quad x,y,z in Y$
+  3. *Homogeneity:* $⟨lambda x, y⟩ = lambda ⟨x, y⟩ quad x,y in Y quad lambda in RR$
+  4. *Positivity:* $⟨x, x⟩ >= 0$ and $⟨x, x⟩ = 0 <==> x = 0$
 ]
 
 
@@ -160,9 +160,9 @@ We can now start to categorize inverse problems:
 #definition(title: "Inner Product")[
   A vector norm is a vector space Y over a field $F$ is a map $norm(.): Y -> RR$ with:
 
-  + *NON-NEGATIVITY* $norm(x) >= 0 quad forall x in V, norm(x) = 0 <=> x = 0$
-  + *POSITIVE HOMOGENEITY* $norm(lambda x) = |lambda| norm(x) space forall x in Y, lambda in FF$
-  + *TRIANGLE INEQUALITY* $norm(x + y) <= norm(x) + norm(y) space x, y in V$
+  + *non-negativity:* $norm(x) >= 0 quad forall x in V, norm(x) = 0 <=> x = 0$
+  + *positive homogeneity:* $norm(lambda x) = |lambda| norm(x) space forall x in Y, lambda in FF$
+  + *triangle inequality:* $norm(x + y) <= norm(x) + norm(y) space x, y in V$
 ]
 
 #example(title: "vector norm")[
