@@ -20,7 +20,9 @@ The binding energy of hydrogen is 13.6 eV.
 For a Medical CT you need around 100keV, for Mammography you need around 20keV. 
 
 === Forms of Ionizing Radiation
+
 1. *Particulate Radiation*: Any subatomic particle (proton, neutron, electron) with enough kinetic energy to be ionizing.
+
 2. *Electromagnetic Radiation*: Can act as a wave or a particle (photon). If energy $> 13.6$ eV (binding energy of hydrogen electron), it is considered ionizing.
 
 #remark()[
@@ -35,7 +37,9 @@ For a Medical CT you need around 100keV, for Mammography you need around 20keV.
 ]
 
 == Interaction of Energetic Electrons with Matter
+
 - *Collision transfer* (~99% $arrow$ heat): Collision with other electrons until kinetic energy is exhausted. If they bump into each other, then energy can be transfered to the other electron which then will emit infrared photons, which is heat.
+
 - *Radiative transfer* (~1% $arrow$ X-ray):
   - Eject inner shell electron, generating *characteristic X-ray radiation*.
   - Electron flies close to the atom nucleus and is braked by nucleus, generating *Bremsstrahlung X-ray*.
@@ -45,7 +49,9 @@ For a Medical CT you need around 100keV, for Mammography you need around 20keV.
 ) 
 
 == Interaction of Electromagnetic Radiation with Matter
-- *Photoelectrical Effect*: Photon hit an atom and thereby ejects an inner shell electron. The energy loss of the photon is $h nu - E_B$. Afterwards the photon moves on with a smaller frequency. Then a free flying electorn can fill the hole again and that leads to an X-Ray. It could also happen that that released X-Ray directly hits again an electron on the outer-shell and that is then a Auger electron.
+
+- *Photoelectrical Effect*: Photon hit an atom and thereby ejects an inner shell electron. The energy loss of the photon is $h nu - E_B$. Afterwards the photon moves on with a smaller frequency. Then a free flying electron can fill the hole again and that leads to an X-Ray. It could also happen that the released X-Ray directly hits again an electron on the outer-shell and that is then a Auger electron.
+
 - *Compton Scattering*: Photon interacts with outer-shell electrons, yielding a Compton electron and a scattered photon with less energy. This energy loss depends on the deflection angle and is defined by this formula:
 $ E_c = h nu - h nu' = h(nu - nu') $
 
@@ -55,7 +61,7 @@ $ E_c = h nu - h nu' = h(nu - nu') $
 
 == X-Ray Generation
 
-You have a tube current that creates a tube voltage between a tungsten rotating anode and a static cathode. The voltage eject electrons which hit the rotating anode and then it kicks out X-rays.
+You have a tube current that creates a tube voltage between a tungsten rotating anode and a static cathode. The voltage ejects electrons which hit the rotating anode and then it kicks out X-rays.
 
 #figure(
   image("../assets/X-ray-generation.png", width: 70%),
@@ -92,7 +98,6 @@ $ N(x) = N_0 exp(- integral mu (x) d x) $
 We have now 2 quantities to describe this setting:
 - photon fluence rate (number of photons over some area of some time ) $psi = (N / A delta t)$
 - itensity of a beam $I = psi  E$
-
 
 
 === Narrow Beam vs. Broad Beam
@@ -134,22 +139,26 @@ $ log I(x) / I_0 = - integral_0^x mu(tilde(x)) d tilde(x) quad <=> quad underbra
 
 $ hat(y)_i = integral_0^x mu(hat(x)) d hat(x) $
 
-With that we have a linear inverse problem. The only thing that changed was first I was realated to a Poisson Distribution and was related to counting. Now it is more gaussian. And that is somehing we can work with leaving us with essentially
+With that we have a linear inverse problem. The only thing that changed was first I was realated to a Poisson Distribution and was related to counting. Now it is more gaussian. And that is something we can work with leaving us with essentially
 
 $ hat(y)_i = arrow(a)_i^T arrow(mu) $
+
 === Blurring and Noise
+
 Blurring sources are Penumbra (due to focal spot size), Compton scattering, and detector resolution.
 
 #figure(
   image("../assets/point_hole_camera.png", height: 150pt),
 ) 
 #definition(title: "local contrast")[
+
   $ C = (I_t - I_b) / I_b $ 
   $I_t$: target intensity (lesion), $I_b$: background intensity
 ] 
 
 
 #definition(title: "Signal to noise ratio")[
+  
   $ "SNR" = (I_t - I_b) / sigma_b = (C dot I_b) / sigma_b $
   $sigma_b$: Std in the background
 
@@ -166,19 +175,27 @@ To increase SNR:
 2. Increase photon count $N_b$ (not so healthy for the patient)
 
 == Computed Tomography (CT)
-Tomography (from Greek *tomos* "slice" and *grapho* "to write") involves imaging by sectioning a volume using projected radiographs from different orientations. Compared to X-ray we have here a lot more unkowns as we not need to reconstruct a projection, but we need to reconstruct every single slice. You basically have your X-ray source again and a line of detectors with a filter to compensate for the compton scattering.
+
+Tomography (from Greek *tomos* "slice" and *grapho* "to write") involves imaging by sectioning a volume using projected radiographs from different orientations. Compared to X-ray we have here a lot more unkowns as we do not need to reconstruct a projection, but we need to reconstruct every single slice. You basically have your X-ray source again and a line of detectors with a filter to compensate for the compton scattering.
+
 #figure(
   image("../assets/CT.png", height: 150pt),
 ) 
+
 In the first generation you just had 1 detector, so it took forever to scan.
+
 #figure(
   image("../assets/CT2.png", height: 150pt),
 ) 
+
 And nowadays you have detectors all around you and it only takes seconds to scan.
+
 #figure(
   image("../assets/CT3.png", height: 150pt),
 )
+
 First the scanners measured the energy. Nowadays they are able to measure each photon individually. With that you get much sharper scans. And historic overview can be found here:
+
 #block(text(size: 6pt, {
 
   table(
@@ -217,6 +234,7 @@ and this is a linear problem. So basically we assume that the spectrum is very p
 $ g_d = -ln(I_d / I_0) = integral_(Gamma_d) mu(s, overline(E)) d s = underbrace(a_d^T, d^"th" "column of" A) mu => A x = y $
 
 === Parallel-Ray Reconstruction
+
 In newer Scaners, we measure with a cone instead of parallel lines, as the source rotates, different rays from different time-points are parallel to each other and in post-processing this can be rearranged again to have parallel rays.
 
 Let's fix a 2D-line: $ Gamma(l, theta) = { binom(x, y) : x dot cos theta + y dot sin theta = l } $
@@ -238,11 +256,11 @@ For a fixed angle $theta$, we call $g(l, theta_i)$ a *projection* and for all th
 )
 
 
-
 === Reconstruction Methods
 
 === Backprojection
-Idea: Simply project or smear each measurement $g(l, theta)$ back onto the image, because we at the spots with the heighest intensities there must have been the most material. For one angle:
+
+Idea: Simply project or smear each measurement $g(l, theta)$ back onto the image, because at the spots with the heighest intensities there must have been the most material. For one angle:
 
 $ b_theta (x, y) = g(x cos theta + y sin theta, theta) $
 
@@ -290,6 +308,7 @@ $ = integral_(-oo)^(oo) integral_0^pi G(rho, theta) dot exp(i 2 pi rho (cos thet
   image("../assets/sinogrampartial.png", height: 170pt),
 )
 == Artifacts and Hounsfield Units
+
 *Aliasing*: Streak artifacts due to insufficient number of projections.
 
 #figure(
@@ -303,6 +322,7 @@ $ = integral_(-oo)^(oo) integral_0^pi G(rho, theta) dot exp(i 2 pi rho (cos thet
 
 
 #definition(title: "Hounsfield Units (HU)")[
+  
   Standardized scale to compare different materials in CT scans:
   $ h = 1000 dot (mu - mu_"Water") / (mu_"Water" - mu_"Air") $
 
