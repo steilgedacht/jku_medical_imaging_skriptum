@@ -5,15 +5,15 @@
 
 == What is an Inverse Problem?
 
-There exit a "Forward Problem" which estimate the effect from the cause and then there is inverse Problem which estimates the cause from the effect. In the medical context that would be finding the cause illness given from a certain syntom/effect.  
-Typically, the forward problem is ”easy” and well described. The challenge here is: We need to solve the inverse problem given only the observed effect of the
-forward problem. 
+There exists a "Forward Problem" which estimates the effect from the cause and then there is inverse problem which estimates the cause from the effect. In the medical context that would be finding the illness (cause) given from a certain symptom (effect).
+Typically, the forward problem is "easy" and well described. The challenge here is: We need to solve the inverse problem given only the observed effect of the forward problem. As an example from the real world:
 
-As an Example from the real world: 
-forward problem: The street becomes wet when it rains.
-backward problem would be: We observe that the street is wet. Why?
+Forward problem: The street becomes wet when it rains.
+
+Backward problem would be: We observe that the street is wet. Why?
 
 There are multiple different causes:
+
 - Rain
 - Fog
 - Cleaning
@@ -22,11 +22,13 @@ And this can be already problematic as we have multiple different options for wh
 
 #example(title: "Computer Tomography")[
 
-  *Forward Problem*  
+  *Forward Problem*
+
   X-ray emitter and detector rotating around the body.  
   Detectors measure the number of photons passing through the body and hitting the detector  
 
   *Inverse Problem*  
+  
   Reconstruct the interior of the body from the measured detector signals.
 
   Note that a CT Scan can be very large in file size. A scan from shoulder to belt line is already 18GB of data for just a single scan.
@@ -34,15 +36,18 @@ And this can be already problematic as we have multiple different options for wh
 ]
 
 #example(title: "Deconvolution")[
-  *Forward Problem*  
+  
+  *Forward Problem*
+  
   Observe a blurred image $ f = k * u $ on a domain $Omega subset RR^2$.
 
   *Inverse Problem*  
+  
   Estimate the sharp image $u: Omega -> RR$ given the blur kernel $k: Omega times Omega -> RR_+$ 
   On of the oldest clasical methods to do that is the Wiener Filter.
   Deconvolution is linked to Fourier $F$:
 
-  $ f= k * u $ 
+  $ f = k * u $ 
 
   $ F(f) = F(k) dot.o F(u) $
 
@@ -50,7 +55,7 @@ And this can be already problematic as we have multiple different options for wh
 
   $ F^(-1) {F(f)} = F^(-1){F(k) dot.o F(u)} = f $  
 
-  where $dot.o$ is a pointwise multiplication. So a estimate $accent(u, hat)$ would be 
+  where $dot.o$ is a pointwise multiplication. So an estimate $accent(u, hat)$ would be 
 
   $ accent(u, hat) = F^(-1) (F(f)/F(k)) $
 
@@ -70,6 +75,7 @@ And this can be already problematic as we have multiple different options for wh
 == Vector Space 
 
 #definition(title: "Vector Space")[
+
   A non-empty set $V$ is a vector space over a field $FF in {RR, CC}$ if there are operations of vector addition: $+:V times V -> V$  and scalar multiplication: $dot:FF times V -> V$ satisfying the following axioms:
 
   *Vector addition*
@@ -99,6 +105,7 @@ And this can be already problematic as we have multiple different options for wh
 
 == Inverse Problem
 #definition(title: "Inverse Problem")[
+
   Let $X, Y$ be vector spaces and $A: X -> Y$. 
   The forward problem is defined as $y = A x$ for any $x in X$.
   The inverse problem is to find $x in X$ such that $A x = y$ for any $y in Y$.
@@ -111,6 +118,7 @@ So we want to get $A^(-1)(y) = accent(x, hat)$
 We can now start to categorize inverse problems:
 
 #definition(title: "Well-Posedness")[
+
   The inverse problem $A x = y$ is well-posed if:
 
   1. *Existence:* a solution exists 
@@ -146,6 +154,7 @@ We can now start to categorize inverse problems:
 == Inner Product
 
 #definition(title: "Inner Product")[
+
   An inner product on a vector space $Y$ over a $FF$ is a map $ ⟨., .⟩: Y times Y -> FF $  with the following properties:
 
   1. *Symmetry:* $⟨x, y⟩ = overline(⟨y, x⟩) quad x,y in Y$
@@ -158,6 +167,7 @@ We can now start to categorize inverse problems:
 == Vector Norm
 
 #definition(title: "Inner Product")[
+
   A vector norm is a vector space Y over a field $F$ is a map $norm(.): Y -> RR$ with:
 
   + *non-negativity:* $norm(x) >= 0 quad forall x in V, norm(x) = 0 <=> x = 0$
@@ -172,6 +182,7 @@ We can now start to categorize inverse problems:
 == Matrix Norm
 
 #definition(title: "Inner Product")[
+
   Let $norm(dot)_a$ and $norm(dot)_b$ be vector norms on $RR^n$ and $RR^m$, respectively.
   Given a matrix $A in RR^(m times n)$, the *induced matrix norm* $norm(A)_(a,b)$ is defined as:
 
@@ -188,6 +199,7 @@ We can now start to categorize inverse problems:
 == Injection, Surjection, Bijection
 
 #definition(title: "Injection, Surjection, Bijection")[
+  
   These properties of mappings $A: X -> Y$ are defined as
 
   - *Injection:* $A: X -> Y$ is injective if $A x_1 = A x_2 => x_1 = x_2$.
@@ -197,7 +209,8 @@ We can now start to categorize inverse problems:
 
 == Null Space and Range Space
 
-#definition(title: "Null Spance and Range Space")[
+#definition(title: "Nullspace and Range Space")[
+
   Let $A: X -> Y$ where $X, Y$ are vector spaces.
   - *Nullspace of A:* $N(A) = {x in X : A x = 0}$
   - *Range space of A:* $R(A) = {A x in Y : x in X}$
@@ -219,6 +232,7 @@ We can now start to categorize inverse problems:
 == Definition of the Linear Inverse Problem
 
 #definition(title: "Linear Inverse Problem")[
+  
   Given $A: X -> Y$ and observation $y in Y$ the inverse problem is called linear if $A$ is linear which means that 
   $A(alpha x_1 + beta x_2) = alpha A(x_1) + beta A(x_2)$
 ]
@@ -234,9 +248,11 @@ We can now start to categorize inverse problems:
   Nullspace of linear A
   $=> {0} in cal(N)(A)$
 ]
+
 == Decomposition of Square Matrices
 
 #definition(title: "Decomposition of the Square Matrix")[
+
   Let $A in RR^(n times n)$, recall Eigenvalues $lambda_i$ and Eigenvectors $v_i$:
   $ A v_i = lambda_i v_i space "for" i = 1, dots, n $
   $ det(A - lambda I) = 0 $
@@ -246,7 +262,8 @@ We can now start to categorize inverse problems:
 ]
 
 #remark()[
-  If $A$ is hermitian $<=> A^* = A$, we have that all $lambda_i$ are real & $v_i$ are orthonormal.
+
+  If $A$ is hermitian $<=> A^* = A$, we have that all $lambda_i$ are real and $v_i$ are orthonormal.
 
   $ v_i^T v_j = 0 quad "for" i != j $
 
@@ -256,6 +273,7 @@ We can now start to categorize inverse problems:
 == Singular Value Decomposition
 
 #definition(title: "Singular Value Decomposition")[
+
   Let $X in RR^n, Y in RR^m$ be an inverse problem $A x=y$ with a $A in RR^(m times n)$. The Goal:
   $ A = U Lambda V^T $
   - $U in RR^(m times p)$, $Lambda in RR^(p times p)$, $V in RR^(p times n)$
@@ -362,7 +380,7 @@ $ x = (A^T A)^(-1) A^T y $
     caption: [Grid representation of variables $x_i$]
   )
 
-  We send rays through the matrix in 3 directions (top to bottowm, diagonal and left to right):
+  We send rays through the matrix in 3 directions (top to bottom, diagonal and left to right):
 
   $y_1 = x_1 + x_3 $ (Column 1 sum) 
 
@@ -416,7 +434,7 @@ Let $X in RR^n$, $Y in RR^m$ and the inverse problem $A x = y$ with $A in RR^(m 
 We define the generalized inverse as:
 $ A_g^(-1) = (U_p Lambda_p V_p^T)^(-1) = (V_p^T)^(-1) Lambda_p^(-1) U_p^(-1) = V_p Lambda_p^(-1) U_p^T $
 
-Note that here $U$ is the eigenvectors of $A A^T$ and $V$ are the eigenvectors of $A^T A$. And note that $U^T_p U_p = I$, that's why we can say $U^T_p = U_p^(-1) $ and $ U_p= (U^T_p)^(-1)$. The same holds for $V_p$.
+Note that here $U$ is the eigenvectors of $A A^T$ and $V$ is the eigenvectors of $A^T A$. And note that $U^T_p U_p = I$, that's why we can say $U^T_p = U_p^(-1) $ and $ U_p= (U^T_p)^(-1)$. The same holds for $V_p$.
 Check if Generalized Inverse computes the exact Least Squares and Minimum Length solutions:
 
 ==== I. $p = m = n$:
@@ -426,6 +444,7 @@ $ A_g^(-1) = V_p Lambda_p^(-1) U_p^T quad  quad | dot A = U_p Lambda_p V_p^T $
 $ A_g^(-1) A = V_p Lambda_p^(-1) underbrace(U_p^T U_p, I) Lambda_p V_p^T = V_p underbrace(Lambda_p^(-1) Lambda_p, I) V_p^T = I $
 
 ==== II. $p = m > n$:
+
 $ x &= (A^T A)^(-1) A^T y \
    &= ((U_p Lambda_p V_p^T)^T (U_p Lambda_p V_p^T))^(-1) (U_p Lambda_p V_p^T)^T y \
    &= (V_p Lambda_p underbrace(U_p^T U_p, "Id") Lambda_p V_p^T)^(-1) (V_p Lambda_p U_p^T) y \
@@ -435,6 +454,7 @@ $ x &= (A^T A)^(-1) A^T y \
 
 
 ==== III. $p = m < n$: 
+
 $ x &= A^T (A A^T)^(-1) y \
    &= (V_p Lambda_p U_p^T) (U_p Lambda_p V_p^T V_p Lambda_p U_p^T)^(-1) y \
    &= (V_p Lambda_p U_p^T) (U_p Lambda_p^2 U_p^T)^(-1) y \
@@ -442,6 +462,7 @@ $ x &= A^T (A A^T)^(-1) y \
    &= V_p Lambda_p^(-1) U_p^T y = A_g^(-1) y $
 
 === IV. $0 < p < min(m, n)$:
+
 However, $A_g^(-1)$ still exists. It computes a solution that interpolates between Least Squares & Minimum Length solutions.
 
 == Regularization
@@ -515,7 +536,7 @@ $ g(y) = cases(0 &"if" y in S, infinity &"else") $
   Thus, the Soft Thresholding operator is:
   $ "prox"_(|dot|) (x) = cases(x - 1 &"if" x > 1, x + 1 &"if" x < -1, 0 &"else") $
 
-  This would now be for example the sparse solution that we have seen in the table above. The proximal map kills all of the small graidents and shirks the rest of the gradients. It is essentially a way of first performing graident descent and then you look with the proximal map where to go and at this point you look then how suitable it is or how much penalty the regularizer gives you. In our case the regularizer shrinks the gradient and sets all the values in $plus.minus 1$ to $0$. 
+  This would now be for example the sparse solution that we have seen in the table above. The proximal map kills all of the small gradients and shrinks the rest of the gradients. It is essentially a way of first performing gradient descent and then you look with the proximal map where to go and at this point you look then how suitable it is or how much penalty the regularizer gives you. In our case the regularizer shrinks the gradient and sets all the values in $plus.minus 1$ to $0$. 
 ]
 
 == A Probabilistic Perspective of Regularization
